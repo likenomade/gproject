@@ -7,7 +7,7 @@ public class PageVO<T>  {
 	
 	private List<T> list ; // 목록리스트 저장
 	private int currPage ;       // 현재 페이지번호
-	private int rowPerPage = 5;  // 페이지당 보여줄 Row 갯수
+	private int rowPerPage = 8;  // 페이지당 보여줄 Row 갯수
 	private int totalRowCount;   // 전체 레코드갯수
 	private int sno;             // startRno
 	private int eno;             // endRno

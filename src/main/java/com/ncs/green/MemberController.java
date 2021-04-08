@@ -4,335 +4,63 @@ import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
-import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import service.MemberService;
-import vo.MemberVO;
-import vo.PageVO;
+import service.GmemberService;
+import service.MailSendService;
+import vo.GmemberVO;
 
 @Controller
 public class MemberController {
+
 	@Autowired
-	MemberService service;
-	
-// ** PageList 1.
-	@RequestMapping(value = "/mpage")
-	public ModelAndView mpage(ModelAndView mv, PageVO<MemberVO> pvo) {
-		// 1) Paging 준비
-		int currPage = 1;
-		if ( pvo.getCurrPage() > 1 )
-			 currPage = pvo.getCurrPage();
-		else pvo.setCurrPage(currPage);
-		
-		int sno = (currPage-1)*pvo.getRowPerPage() + 1 ;
-		int eno = sno+pvo.getRowPerPage()-1;	
-		pvo.setSno(sno);
-		pvo.setEno(eno);
-				
-		// 2) Service 처리
-		// => Service, ServiceImpl, DAO, Mapper, pageMList
-		pvo=service.pageList(pvo) ;
-		int totalPageNo = pvo.getTotalRowCount()/pvo.getRowPerPage();
-		if (pvo.getTotalRowCount()%pvo.getRowPerPage() !=0 )
-			totalPageNo +=1;
-		
-		// 3) View 처리
-		// ** view 2
-		
-		int sPageNo = ((currPage-1)/pvo.getPageNoCount())*pvo.getPageNoCount()+1;
-		int ePageNo = (sPageNo+pvo.getPageNoCount())-1;  
-		// 계산으로 얻어진 ePageNo 가 실제 LastPage 인 totalPageNo보다 크면 수정필요 
-		if (ePageNo > totalPageNo) { 
-			ePageNo = totalPageNo; 
-		}
-		mv.addObject("sPageNo", sPageNo);
-		mv.addObject("ePageNo", ePageNo);
-		mv.addObject("pageNoCount", pvo.getPageNoCount());
-		
-		// ** view 1
-		// => 출력할 dataList, currPage, lastPageNo(=totalPageNo), 
-		if (pvo.getList().size()>0) {
-			mv.addObject("Banana", pvo.getList());
-		}else {
-			mv.addObject("message", "~~ 출력할 자료가 1건도 없습니다 ~~");
-		}
-		mv.addObject("currPage", pvo.getCurrPage());
-		mv.addObject("totalPageNo", totalPageNo);
-		mv.setViewName("member/pageMList");
-		return mv;
-	} //mpage	
-	
-// ** Check MemberList 
-	@RequestMapping(value = "/mcheck")
-	public ModelAndView mcheck(HttpServletRequest request, 
-								ModelAndView mv, MemberVO vo) {
-		// check에 선택사항이 없으면 selectList() 
-		// check에 선택사항이 있으면 checkselectList()
-		System.out.println("** mcheck, Check 확인"+vo);
-		List<MemberVO> list = null;
-		//if (vo.getCheck() !=null && vo.getCheck().length > 0) {
-		// => 배열의 경우 선택하지않은 경우에도 check=null 이므로 length 비교 안해도됨 
-		if (vo.getCheck() !=null) {	
-			  list= service.checkselectList(vo);
-		}else list= service.selectList();
-		
-		if ( list != null && list.size()>0 ) { 
-			// Mapper에서 null을 return하지 않으므로 길이로 확인한다.
-			mv.addObject("Banana", list);
-		}else {
-			mv.addObject("message","~~ 출력자료가 1건도 없습니다 ~~");
-		}
-		mv.setViewName("member/checkMList"); // forward
-		return mv;
-	} //mcheck
-	
-// ** Image DownLoad
-	@RequestMapping(value = "/dnload")
-	public ModelAndView dnload(ModelAndView mv, @RequestParam("dnfile") String dnfile) {
-		// String dnfile=request.getParameter("dnfile") 와 동일
-		
-		dnfile = "C:/IDset/eclipse/Spring03/src/main/webapp/" + dnfile;
-		System.out.println("** dnfile => " + dnfile);
-		File file = new File(dnfile);
+	GmemberService service;
 
-		mv.addObject("downloadFile", file);
-		mv.setViewName("download");
-		// 일반적인 경우 views/download.jsp 를 찾음, 그러나 이 경우에는 아님
-		// => servlet-context.xml 에 설정하는 view 클래스 (DownloadView.java) 의
-		// id 와 동일 해야함.
+	@Autowired
+	PasswordEncoder passwordEncoder;
+
+	// 메일 보내는거
+	@Autowired
+	private MailSendService mss;
+
+// -----------------------------이용약관 및 회원가입 ---------------------------------------
+	@RequestMapping(value = "/checkterm")
+	public ModelAndView checkterm(ModelAndView mv, HttpServletRequest request) {
+		mv.setViewName("member/checkterm");
 		return mv;
 
-		/*
-		 * 위 50~51 행은 아래처럼 작성할 수도 있다. return new ModelAndView("download",
-		 * "downloadFile", file);
-		 * 
-		 * => 생성자 참고 public ModelAndView(View view, String modelName, Object
-		 * modelObject) { this.view = view; addObject(modelName, modelObject); }
-		 */
-	} // dnload	
-	
-	
-// *** Ajax MemberList	
-	@RequestMapping(value = "/amlist")
-	public ModelAndView amlist(HttpServletRequest request, ModelAndView mv) {
-		
-		List<MemberVO> list = service.selectList();
-		if ( list != null) {
-			mv.addObject("Banana", list);
-		}else {
-			mv.addObject("message","~~ 출력자료가 1건도 없습니다 ~~");
-		}
-		mv.setViewName("ajaxTest/axMemberList"); // forward
-		return mv;
-	} //amList
-
-// *** Ajax jsonView Member Delete	
-	@RequestMapping(value = "/jsdelete")
-	public ModelAndView jsdelete(ModelAndView mv, MemberVO vo) {
-		
-		if ( service.delete(vo) > 0 ) {
-			mv.addObject("success", "T");
-		}else {
-			mv.addObject("success", "F");
-		}
-		mv.setViewName("jsonView");  
-		return mv;
-	} //jsdelete	
-	
-	
-// *** JSON : 제이슨, JavaScript Object Notation
-// 자바스크립트의 객체 표기법으로, 데이터를 전달 할 때 사용하는 표준형식.
-// 속성(key) 과 값(value) 이 하나의 쌍을 이룸
-	
-// ** JAVA객체 -> JSON 변환하기
-// 1) GSON
-// : 자바 객체의 직렬화/역직렬화를 도와주는 라이브러리 (구글에서 만듦)
-// 즉, JAVA객체 -> JSON 또는 JSON -> JAVA객체
-	
-// 2) @ResponseBody (매핑 메서드에 적용)
-// : 메서드의 리턴값이 View 를 통해 출력되지 않고 HTTP Response Body 에 직접 쓰여지게 됨.
-// 이때 쓰여지기전, 리턴되는 데이터 타입에 따라 종류별 MessageConverter에서 변환이 이뤄진다.
-// MappingJacksonHttpMessageConverter 를 사용하면 request, response 를 JSON 으로 변환
-// view (~.jsp) 가 아닌 Data 자체를 전달하기위한 용도
-// @JsonIgnore : VO 에 적용하면 변환에서 제외
-
-// 3) jsonView
-// => Spring 에서 MappingJackson2JsonView를 사용해서
-// ModelAndView를 json 형식으로 반환해 준다.
-// => 방법
-// -> pom dependency추가 , 설정화일 xml 에 bean 등록
-// -> return할 ModelAndView 생성시 View를 "jsonView"로 설정
-
-// ** Json Login Test	
-// => viewName 을 "jsonView"	로
-// => addObject
-//		-> 성공 : loginSuccess = 'T'
-// 		-> 실패 : loginSuccess = 'F' , 실패 message
-	@RequestMapping(value = "/jlogin")
-	public ModelAndView jlogin(HttpServletRequest request, 
-			HttpServletResponse response, ModelAndView mv, MemberVO vo) {
-		
-		// jsonView 사용시 response 의 한글 처리
-		response.setContentType("text/html; charset=UTF-8");
-		
-		String password = vo.getPassword();
-		vo = service.selectOne(vo);
-		if ( vo != null) { // ID Ok
-			if (vo.getPassword().equals(password)) {
-				// Login 성공 -> session 보관, home
-				request.getSession().setAttribute("loginID", vo.getId());
-				mv.addObject("loginSuccess", 'T');
-			}else {
-				// Password 오류
-				mv.addObject("message", "~~ Password 오류 !! 다시 하세요 ~~");
-				mv.addObject("loginSuccess", 'F');
-			}
-		}else { // ID 오류
-			mv.addObject("message", "~~ ID 오류 !! 다시 하세요 ~~");
-			mv.addObject("loginSuccess", 'F');
-		}
-		mv.setViewName("jsonView");
-		return mv;
-	} //jlogin
-	
-// *** ID 중복확인	
-	@RequestMapping(value = "/idCheck")
-	public ModelAndView idCheck(ModelAndView mv, MemberVO vo) {
-		// ** 전달된 ID 가 존재하는지 확인
-		// => notNull : 존재 -> 사용불가
-		// => Null : 없음 -> 사용가능
-		// => 그러므로 전달된 ID 보관 해야함
-		mv.addObject("newID", vo.getId());
-		if (service.selectOne(vo) != null) {
-			mv.addObject("idUse", "F"); //사용불가
-		}else {
-			mv.addObject("idUse", "T"); //사용가능
-		}
-		mv.setViewName("member/idDupCheck");
-		return mv;
-	} //idCheck
-
-// *** Login & Logout
-	@RequestMapping(value = "/mloginf")
-	public ModelAndView mloginf(ModelAndView mv) {
-		mv.setViewName("login/loginForm");
-		return mv;
 	}
-	
-	@RequestMapping(value = "/mlogin")
-	public ModelAndView mlogin(HttpServletRequest request, ModelAndView mv, MemberVO vo) {
-		
-		String password = vo.getPassword();
-		vo = service.selectOne(vo);
-		if ( vo != null) { // ID Ok
-			if (vo.getPassword().equals(password)) {
-				// Login 성공 -> session 보관, home
-				request.getSession().setAttribute("loginID", vo.getId());
-				 mv.setViewName("redirect:home"); 
-			}else {
-				// Password 오류
-				mv.addObject("message", "~~ Password 오류 !! 다시 하세요 ~~");
-				mv.setViewName("member/loginForm");
-			}
-		}else { // ID 오류
-			mv.addObject("message", "~~ ID 오류 !! 다시 하세요 ~~");
-			mv.setViewName("login/loginForm");
-		}
-		return mv;
-	} //mlogin
-	
-	@RequestMapping(value = "/mlogout")
-	public ModelAndView mlogout(HttpServletRequest request, 
-						ModelAndView mv, RedirectAttributes rttr) {
-		
-		HttpSession session = request.getSession(false);
-		String message = null;
-		if (session !=null && session.getAttribute("loginID") !=null) {
-			session.invalidate();
-			message = "~~ 로그아웃 성공 ~~";
-		}else {
-			message = "~~ 로그인 하지 않았습니다 ~~";
-		}
-		rttr.addFlashAttribute("message",message) ;
-		// session 에 보관되므로 url에 붙지않이 때문에 깨끗하고 f5(새로고침)에 영향을 주지않음  
-		// home 에서 request 처리하지않아도 됨
-		// 단, rttr.addAttribute("message",message) 는 url 에 붙어전달됨 
-		
-		// mv.setViewName("home"); -> home.jsp
-		mv.setViewName("redirect:home"); 
-		// 요청명 home , "redirect:" 는 오류
-		return mv;
-	} //mlogout
 
-// *** List & Detail	
-	
-	@RequestMapping(value = "/mlist")
-	public ModelAndView mlist(HttpServletRequest request, ModelAndView mv) {
-		
-		List<MemberVO> list = service.selectList();
-		if ( list != null) {
-			mv.addObject("Banana", list);
-		}else {
-			mv.addObject("message","~~ 출력자료가 1건도 없습니다 ~~");
-		}
-		// redirect 요청시 전달된 message 처리
-		// => from mdetail
-		if (request.getParameter("message") !=null )
-			mv.addObject("message",request.getParameter("message"));
-			
-		mv.setViewName("member/memberList"); // forward
+	@RequestMapping(value = "/memberjoinp")
+	public ModelAndView memberjoinp(ModelAndView mv) {
+		// mv.setViewName("member/joinForm2"); // ui구현 Test
+		mv.setViewName("member/memberjoinp");
 		return mv;
-	} //mList
-	
-	@RequestMapping(value = "/mdetail")
-	public ModelAndView mdetail(HttpServletRequest request, ModelAndView mv, MemberVO vo) 
-					throws UnsupportedEncodingException {
-		
-		// redirect 요청시 전달된 message 처리
-		// => from mdetail
-		if (request.getParameter("message") !=null )
-			mv.addObject("message",request.getParameter("message"));
-		
-		vo = service.selectOne(vo);
-		if ( vo != null) {
-			mv.addObject("Apple", vo);
-			if ("U".equals(request.getParameter("jcode"))) {
-				mv.setViewName("member/updateForm");   
-			}else {
-				mv.setViewName("member/memberDetail");  
-			}
-		}else {
-			// url 로 전달되는 한글 message 처리 위한 encoding
-			String message = URLEncoder.encode("~~ member 가 없네용 ~~", "UTF-8");
-			mv.setViewName("redirect:mlist?message="+message); // sendRedirect
-		}
+	} // memberjoinp
+
+	@RequestMapping(value = "/memberloginpage") // 헤더 로그인 부분 페이징이동
+	public ModelAndView memberjoinpage(ModelAndView mv) {
+		// mv.setViewName("member/joinForm2"); // ui구현 Test
+		mv.setViewName("member/memberloginpage");
 		return mv;
-	} //mList
-	
-// *** Join 
-	@RequestMapping(value = "/mjoinf")
-	public ModelAndView mjoinf(ModelAndView mv) {
-		//mv.setViewName("member/joinForm2"); // ui구현 Test 
-		mv.setViewName("member/joinForm");
-		return mv;
-	} //mjoinf
-	
-	@RequestMapping(value = "/mjoin")
-	public ModelAndView mjoin(HttpServletRequest request, 
-				ModelAndView mv, MemberVO vo) throws IOException {
-		
+	} // memberjoinpage
+
+	@RequestMapping(value = "/memberjoin")
+	public ModelAndView memberjoin(HttpServletRequest request, ModelAndView mv, GmemberVO vo) throws IOException {
+
 		// ** Uploadfile (Image) 처리
 		// => MultipartFile 타입의 uploadfilef 의 정보에서 화일명을 get,
 		// => upload된 image 를 서버의 정해진 폴더 (물리적위치)에 저장 하고, -> file1
@@ -340,142 +68,324 @@ public class MemberController {
 
 		// ** 실제화일을 보관할 물리적 위치 찾기
 		// 1) 현재 작업중인 이클립스 기준 (배포전, ver01)
-		// => D:/MTest/MyWork/Spring02/src/main/webapp/resources/uploadImage
+		// => D:/jaepil/MyWork/Spring02/src/main/webapp/resources/uploadImage
 		// 2) 배포후에는 서버 내에서의 위치가 됨.
-		
-		
-		//톰켓에서 getRealPath_ver01 :C:\IDset\apache-tomcat-9.0.41\webapp\Spring03\
-		//실습 1) ver01
-		//realPath = "C:\IDset\apache-tomcat-9.0.41\webapp\Spring03\"
-		
-	
+		// => getRealPath: D:\jaepil\IDESet\apache-tomcat-9.0.41\webapps\Spring03\
+		// 필요한 위치:
+		// D:/jaepil/IDESet/apache-tomcat-9.0.41/webapps/Spring03/resources/uploadImage
+
 		// ** 경로
 		String realPath = request.getRealPath("/");
-		System.out.println("realPath_ver01 :"+realPath);
-		// realPath_ver01-> D:\MTest\MyWork\.metadata\.plugins\org.eclipse.wst.server.core\tmp0\wtpwebapps\Spring02\
-		
+		System.out.println("realPath_ver01 :" + realPath);
+		// realPath_ver01->
+		// D:\jaepil\MyWork\.metadata\.plugins\org.eclipse.wst.server.core\tmp0\wtpwebapps\Spring02\
 		// 실습1) ver01
-		//realPath = "C:/IDset/eclipse/Spring03/src/main/webapp/resources/uploadImage/";
-		
-		// 실습 2) ver02 (배포환경 or 개발환경)
+		// realPath =
+		// "D:/jaepil/MyWork/Spring03/src/main/webapp/resources/uploadImage/";
+
+		// 실습2) ver02 (배포환경 or 개발환경)
 		if (realPath.contains(".eclipse.")) {
-			realPath="C:/IDset/eclipse/Spring03/src/main/webapp/resoureces/uploadImage";
-		}else {
-			realPath +="resources\\uploadImage\\";
+			realPath = "D:/jaepil/MyWork/gproject/src/main/webapp/resources/uploadImage";
+		} else {
+			realPath += "resources/uploadImage/";
 		}
-		
-		
+
 		// ** 폴더 만들기 (File 클래스활용)
 		// => 저장 경로에 폴더가 없는 경우 만들어 준다
 		File f1 = new File(realPath); // 매개변수로 지정된 정보에 대한 File 객체 생성
-		System.out.println(" 생성직후 f1=> "+f1);
-		if (!f1.exists()) f1.mkdir() ;
+		System.out.println(" 생성직후 f1=> " + f1);
+		if (!f1.exists())
+			f1.mkdir();
 		// realPath 디렉터리가 존재하는지 검사 (uploadImage 폴더 존재 확인)
 		// => 존재하지 않으면 디렉토리 생성
-		
+
 		// ** MultipartFile
 		// => 업로드한 파일에 대한 모든 정보를 가지고 있으며 이의 처리를 위한 메서드를 제공한다.
 		// String getOriginalFilename(), void transferTo(File destFile),
 		// boolean isEmpty()
-		MultipartFile uploadfilef = null ;
+		MultipartFile uploadfilef = null;
 		// => 기본 Image 설정
-		String file1, file2="resources/uploadImage/basicman2.jpg";
+		String file1, file2 = "resources/uploadImage/basicman1.jpg";
 		// 전송된 Image 가 있는지 확인
 		uploadfilef = vo.getUploadfilef();
-		System.out.println("vo.getUploadfilef() => "+ vo.getUploadfilef());
-		if ( uploadfilef != null && !uploadfilef.isEmpty()) {
-			file1 = realPath + uploadfilef.getOriginalFilename();  
+		System.out.println("vo.getUploadfilef() => " + vo.getUploadfilef());
+		if (uploadfilef != null && !uploadfilef.isEmpty()) {
+			file1 = realPath + uploadfilef.getOriginalFilename();
 			// 드라이브에 저장되는 실제 경로와 화일명
 			uploadfilef.transferTo(new File(file1)); // file 붙여넣기
 			file2 = "resources/uploadImage/" + uploadfilef.getOriginalFilename();
 		}
-		vo.setUploadfile(file2);  
+		vo.setUploadfile(file2);
 		// *******************************************
-		System.out.println("vo.getId() => "+ vo.getId());
-		if (service.insert(vo) > 0) {
+		System.out.println("vo.getId() => " + vo.getId());
+
+		// ** Transaction Test
+		/*
+		 * 1. dependency 확인 <!-- AspectJ --> <dependency> <groupId>org.aspectj</groupId>
+		 * <artifactId>aspectjrt</artifactId> <version>${org.aspectj-version}</version>
+		 * </dependency> <!-- AspectJ Weaver --> <dependency>
+		 * <groupId>org.aspectj</groupId> <artifactId>aspectjweaver</artifactId>
+		 * <version>${org.aspectj-version}</version> </dependency>
+		 * 
+		 * 2. servlet-context.xml AOP 설정
+		 *
+		 * 3. Rollback Test 3.1) Aop xml 적용전 => insert1 은 입력되고, insert2 에서 500 오류 발생
+		 * 3.2) Aop xml 적용후 => insert2 에서 오류발생시 모두 Rollback 되어 insert1, insert2 모두 입력 안됨
+		 */
+		// 3.1) Transaction 적용전 : 동일자료 2번 insert
+		// => 첫번째는 입력완료 되고, 두번째 자료입력시 Key중복 오류발생
+		// 3.2) Transaction 적용후 : 동일자료 2번 insert
+		// => 첫번째는 입력완료 되고, 두번째 자료입력시 Key중복 오류발생 하지만,
+		// rollback 되어 둘다 입력 안됨
+
+		// ** Exception Test : DuplicateKeyException , SQLException
+		// cnt = service.insert(vo);
+
+		// ** PasswordEncoder 적용
+		// => 다이제스트 생성 & vo에 set
+		vo.setPassword(passwordEncoder.encode(vo.getPassword()));
+
+		// ** 이메일 통합 처리
+		String email1 = request.getParameter("email1");
+		String email2 = request.getParameter("email2");
+		String email3 = request.getParameter("email3");
+
+		if (email2 != null && email2.length() > 0) {
+			vo.setEmail(email1 + "@" + email2);
+		} else {
+			vo.setEmail(email1 + "@" + email3);
+		}
+
+		// ** 휴대폰 통합 처리
+		String phone1 = request.getParameter("phone1");
+		String phone2 = request.getParameter("phone2");
+		String phone3 = request.getParameter("phone3");
+
+		vo.setPhone(phone1 + phone2 + phone3);
+
+		int cnt = service.insert(vo);
+		if (cnt > 0) {
+
+			// *** 이메일 인증 관련 코드
+			// https://moonong.tistory.com/45 참고
+			// https://blog.naver.com/vnemftnsska2/221413314636 참고
+
+			// 임의의 authKey 생성 & 이메일 발송
+			String authKey = mss.sendAuthMail(vo.getEmail(), vo.getId());
+			vo.setAuthkey(authKey);
+
+			// DB에 authKey 업데이트
+			service.updateAuthkey(vo);
+
 			// 가입성공 -> 로그인 유도 메시지 출력 : loginForm.jsp
-			mv.addObject("message", " 회원 가입 성공 !!! 로그인 후 이용하세요 ~~");
-			mv.setViewName("login/loginForm");
+			mv.addObject("message", " 회원 가입 성공 !!! 이메일 인증 완료 후 로그인하세요 ~~");
+			mv.setViewName("member/memberloginpage");
 		} else {
 			// 가입실패 -> 재가입 유도 메시지 출력 : joinForm.jsp
 			mv.addObject("message", " 회원 가입 실패 !!! 다시 하세요 ~~");
-			mv.setViewName("member/joinForm");
+			mv.setViewName("member/memberjoinp");
 		}
 		return mv;
-	} //mjoin
+	} // memberjoin
+
+	// *** 이메일 인증 확인 링크를 눌렀을때 실행
+	@RequestMapping(value = "/memberjoinconfirm")
+	public ModelAndView memberjoinconfirm(ModelAndView mv, HttpServletRequest request, GmemberVO vo) {
+		String authKey = vo.getAuthkey();
+
+		// Id가 DB에 있는지 확인
+		vo = service.selectOne(vo);
+		if (vo != null) { // 일치하는 아이디가 있음
+			// 받은 authKey 값과 DB의 저장된 키값이 일치할경우 Authkey의 값을 1로 업데이트
+			if (vo.getAuthkey().equals(authKey)) {
+
+				// 같으면 authStatus의 값을 1로 업데이트
+				service.updateAuthkeyconfirm(vo);
+
+				mv.addObject("message", "이메일 인증이 완료 되었습니다. 로그인 해주세요");
+				mv.setViewName("member/memberloginpage");
+			} else {
+				// 인증키 불일치 오류
+				mv.addObject("message", "이메일 인증키가 같지 않습니다. 인증을 다시 해주세요");
+				mv.setViewName("member/memberloginpage");
+			}
+		} else { // email 오류
+			mv.addObject("message", "~~ email 오류 !! 다시 하세요 ~~");
+			mv.setViewName("member/memberloginpage");
+		}
+		return mv;
+	}
+
 	
-// *** Update & Delete	
-	@RequestMapping(value = "/mupdate")
-	public ModelAndView mupdate(HttpServletRequest request, ModelAndView mv, MemberVO vo)
-			throws UnsupportedEncodingException , IOException {
-		
-		// ** ImageUpload
-		// ver01 (배포전, 이클립스환경)
-	//	String realPath = "C:/IDset/eclipse/Spring03/src/main/webapp/resources/uploadImage/";
-		
-		// 실습2) ver02 (배포환경 or 개발환경) 
+	// *** Id, Email, phone ajax 중복확인
+	@RequestMapping(value = "/userCheck")
+	@ResponseBody
+	public int userCheck(GmemberVO vo) {
+
+		return service.userDuplicationCheck(vo);
+	}
+
+
+// login 부분---------------------------------------------------------
+	@RequestMapping(value = "/loginp")
+	public ModelAndView loginp(ModelAndView mv, HttpServletRequest request) {
+		mv.setViewName("member/memberloginp");
+		return mv;
+	}
+
+	@RequestMapping(value = "/mlogin")
+	public ModelAndView mlogin(HttpServletRequest request, ModelAndView mv, GmemberVO vo, RedirectAttributes rttr) {
+
+		String password = vo.getPassword();
+		vo = service.selectOne(vo);
+		if (vo != null) {
+			if (passwordEncoder.matches(password, vo.getPassword())) {
+				// 메일 인증을 마친 사람만 로그인 가능 getAuthstatus = 0 인증안됨 / getAuthstatus = 1 인증됨
+				if (vo.getAuthkey().equals("Y")) {
+
+					request.getSession().setAttribute("loginID", vo.getId());
+					request.getSession().setAttribute("loginGRADE", vo.getGrade());
+					request.getSession().setAttribute("loginPW", password);
+//					mv.addObject("message", "로그인 성공!");
+					rttr.addFlashAttribute("message", "로그인 성공!");
+					mv.setViewName("redirect:home");
+					/* mv.setViewName("member/loginsuccess"); */
+				} else {
+					rttr.addFlashAttribute("message", "이메일 인증후 로그인할 수 있습니다");
+					mv.setViewName("redirect:home");
+				}
+			} else {
+				// Password 오류
+				mv.addObject("message", "~~ Password 오류 !! 다시 하세요 ~~");
+				mv.setViewName("member/memberloginpage");
+			}
+		} else { // ID 오류
+			mv.addObject("message", "~~ ID 오류 !! 다시 하세요 ~~");
+			mv.setViewName("member/memberloginpage");
+		}
+		return mv;
+	} // mlogin
+
+	@RequestMapping(value = "/mlogout")
+	public ModelAndView mlogout(HttpServletRequest request, ModelAndView mv, RedirectAttributes rttr) {
+
+		HttpSession session = request.getSession(false);
+		String message = null;
+		if (session != null && session.getAttribute("loginID") != null) {
+			session.invalidate();
+			message = "~~ 로그아웃 성공 ~~";
+		} else {
+			message = "~~ 로그인 하지 않았습니다 ~~";
+		}
+		rttr.addFlashAttribute("message", message);
+		mv.setViewName("redirect:home");
+		return mv;
+	} // mlogout
+		// login 부분---------------------------------------------------------
+//------------------------------------ 마이페이지 -----------------------------------
+
+	@RequestMapping(value = "/mypage")
+	public ModelAndView mypage(HttpServletRequest request, ModelAndView mv, GmemberVO vo) {
+		vo = service.selectOne(vo);
+		mv.addObject("vo", vo);
+		mv.setViewName("member/mypage"); // 마이페이지 이동 set
+		return mv;
+	}// mypage로 이동
+
+	@RequestMapping(value = "/myinfopage")
+	public ModelAndView myinfopage(HttpServletRequest request, ModelAndView mv, RedirectAttributes rttr, GmemberVO vo) {
+		request.getSession().setAttribute("loginID", vo.getId()); // 세션 아이디값을 보냄
+
+		vo = service.selectOne(vo); // id값에 대한 vo을 확인
+		mv.addObject("vo", vo); // 값을 불러오기 위한 vo값을 jsp에 전송
+		mv.setViewName("member/myinfopage");
+		return mv;
+	}// 내 정보 띄우기.
+
+	@RequestMapping(value = "/memberfiximage")
+	public ModelAndView memberfiximage(HttpServletRequest request, ModelAndView mv, RedirectAttributes rttr,
+			GmemberVO vo) throws IllegalStateException, IOException {
+		// ** 경로
 		String realPath = request.getRealPath("/");
 		if (realPath.contains(".eclipse.")) {
-			realPath ="C:/IDset/eclipse/Spring03/src/main/webapp/resources/uploadImage/";
-		}else {
-			realPath += "resources\\uploadImage\\" ;
+			realPath = "D:/Jeong/gproject/src/main/webapp/resources/uploadImage/";
+		} else {
+			realPath += "resources/uploadImage/";
 		}
-		
-		MultipartFile uploadfilef = null ;
+
+		MultipartFile uploadfilef = null;
 		// => 기본 Image 설정
-		String file1, file2 ;
+		String file1, file2;
 		// 전송된 Image 가 있는지 확인
 		uploadfilef = vo.getUploadfilef();
-		if ( uploadfilef != null && !uploadfilef.isEmpty()) {  // newImage 선택
-			file1 = realPath + uploadfilef.getOriginalFilename();  
+		if (uploadfilef != null && !uploadfilef.isEmpty()) { // newImage 선택
+			file1 = realPath + uploadfilef.getOriginalFilename();
 			// 드라이브에 저장되는 실제 경로와 화일명
 			uploadfilef.transferTo(new File(file1)); // file 붙여넣기
 			file2 = "resources/uploadImage/" + uploadfilef.getOriginalFilename();
 			vo.setUploadfile(file2);
 		}
-		// *******************************************
-		
-		String message = null;
-		if (service.update(vo) > 0) {
-			// 수정성공 -> message, List출력 (memberList.jsp) 
-			// url 로 전달되는 한글 message 처리 위한 encoding
-			message = URLEncoder.encode("~~ 정보수정 성공 ~~", "UTF-8");
-			mv.setViewName("redirect:mlist?message="+message); // sendRedirect
+		if (service.imageupdate(vo) > 0) {
+			rttr.addFlashAttribute("message", "업데이트 성공");
+			mv.setViewName("member/mypage");
+
 		} else {
-			// 수정실패 -> message, Ddetail (mdetail)
-			message = URLEncoder.encode("~~ 정보수정 실패 !!! 다시 하세요 ~~", "UTF-8");
-			mv.setViewName("redirect:mdetail?id="+vo.getId()+"&message="+message+"&jcode=U"); // sendRedirect
+			rttr.addFlashAttribute("message", "업데이트 실패");
+			mv.setViewName("member/mypage");
+		}
+
+		return mv;
+	}// 프로필 이미지 업데이트
+
+	@RequestMapping(value = "/myinfochangep")
+	public ModelAndView myinfochangep(ModelAndView mv, HttpServletRequest request, GmemberVO vo)
+			throws UnsupportedEncodingException {
+		vo = service.selectOne(vo);// 값 넘겨주어야 해당 id값이 나옴
+		mv.addObject("vo", vo);
+		mv.setViewName("member/myinfochangep");
+		return mv;
+	}// 내 정보 수정 페이지
+
+	@RequestMapping(value = "/myinfochange")
+	public ModelAndView myinfochange(ModelAndView mv, HttpServletRequest request, GmemberVO vo, RedirectAttributes rttr)
+			throws UnsupportedEncodingException {
+		vo.setPassword(passwordEncoder.encode(vo.getPassword()));
+		if (service.update(vo) > 0) {
+			rttr.addFlashAttribute("message", "업데이트 성공");
+			mv.setViewName("member/mypage");
+		} else {
+			rttr.addFlashAttribute("message", "업데이트 실패");
+			mv.setViewName("member/myinfochangp");
 		}
 		return mv;
-	} //mupdate	
-	
-	@RequestMapping(value = "/mdelete")
-	public ModelAndView mdelete(HttpServletRequest request, ModelAndView mv, MemberVO vo)
-									throws UnsupportedEncodingException {
-		
-		// session 정보에서 id getAttribute
+	}// 내 정보 수정 (update)
+
+	@RequestMapping(value = "/memberdelete")
+	public ModelAndView memberdelete(ModelAndView mv, HttpServletRequest request, GmemberVO vo, RedirectAttributes rttr)
+			throws UnsupportedEncodingException {
+		System.out.println("넘어오나?");
 		HttpSession session = request.getSession(false);
-		String message = null;
-		if (session !=null && session.getAttribute("loginID") !=null) {
+		if (session != null && session.getAttribute("loginID") != null) {
 			// 삭제준비
-			vo.setId((String)session.getAttribute("loginID"));
-				
+			vo.setId((String) session.getAttribute("loginID"));
 			// 삭제오류 Test -> Detail
-			//vo.setId("testtest");
+			// vo.setId("testtest");
 			// 삭제처리
 			if (service.delete(vo) > 0) { // 삭제성공 -> session삭제, List
-				session.invalidate();   // session삭제
-				message = URLEncoder.encode("~~ 삭제성공 , 1 개월후 재가입 할수있습니다 ~~", "UTF-8");
-				mv.setViewName("redirect:mlist?message="+message); // sendRedirect
-			}else { // 삭제오류 -> Detail
-				message = URLEncoder.encode("~~ 삭제 실패 ~~", "UTF-8");
-				mv.setViewName("redirect:mdetail?id="+vo.getId()+"&message="+message);
+				session.invalidate(); // session삭제
+				mv.addObject("message", "정상적으로 삭제되었습니다");
+				mv.setViewName("redirect:home"); // sendRedirect
+			} else { // 삭제오류 -> Detail
+				mv.addObject("message", "삭제가 실패하였습니다");
+				mv.setViewName("member/mypage");
 			}
-		}else {
-			message = URLEncoder.encode("~~ 삭제할 정보가 없습니다 (sessionIsNull) ~~", "UTF-8");
-			mv.setViewName("redirect:home?message="+message); 
+		} else {
+			mv.addObject("message", "삭제할 정보가 없습니다");
+			mv.setViewName("member/mypage");
 		}
 		return mv;
-	} //mdelete	
-	
-} //MemberController
+	}
+
+	// ----------------------------------마이페이지------------------------------------
+
+}

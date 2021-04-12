@@ -17,7 +17,7 @@ public interface FaqService {
 	public int totalRowCount() ;
 	public List<FaqVO> criFList(Criteria cri) ;
 	
-	// ** Page BoardList
+	// ** PageList
 	public PageVO<FaqVO> pageList(PageVO<FaqVO> vo);
 	
 	// ** Check BoardList

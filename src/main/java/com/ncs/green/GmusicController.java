@@ -1,9 +1,14 @@
 package com.ncs.green;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -11,6 +16,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
+import criteria.Criteria;
+import criteria.PageMaker;
 import lombok.extern.log4j.Log4j;
 import service.MusicService;
 import vo.MusicVO;
@@ -22,16 +29,79 @@ public class GmusicController {
 	@Autowired
 	MusicService service;
 
-	//musictest
-		@RequestMapping(value = "/musictest")
+	
+	@RequestMapping(value = "/musicsearch")
+	public ModelAndView musicsearch(ModelAndView mv, HttpServletRequest request,Criteria cri, PageMaker pageMaker) {
+
+		cri.setSnoEno();
+		mv.addObject("Banana", service.searchMList(cri)); 
+
+		// 3) PageMaker 처리
+		pageMaker.setCri(cri);
+		pageMaker.setTotalRow(service.searchRowCountM(cri)); //ver02
+
+		mv.addObject("pageMaker",pageMaker);
+		mv.setViewName("musicview/musicSearch");		
+		return mv;
+	} //musicsearch
+	
+	
+	
+	@RequestMapping(value = "/musicCount")
+	   public void musicCount(HttpServletRequest request, ModelAndView mv, MusicVO vo) {
+	      vo = service.selectOne(vo); // vo값 불러오기
+	      vo.setCount(vo.getCount()+1); //count + 1
+	      service.musicCount(vo);
+	   }
+
+	
+	//musiclist
+		@RequestMapping(value = "/musiclist")
 		public ModelAndView musictest(ModelAndView mv) {
 
 			List<MusicVO> list = service.selectList();
 
 			if ( list != null) { mv.addObject("Banana", list); }
-			mv.setViewName("test/musictest");
+			mv.setViewName("musicview/musiclist");
 			return mv;
 		}
+		
+		// playlist 뮤직 플레이 리스트
+		@RequestMapping(value = "/playlist")
+		public ModelAndView playlist(HttpServletRequest request, ModelAndView mv, HttpServletResponse response) {
+			// 파라미터로 값을 받음
+			String snumVal = request.getParameter("snumVal");
+			request.getSession().setAttribute("snumValSession", snumVal);
+
+			MusicVO vo = new MusicVO();
+
+			// 스트링 배열 "," 기준으로 쪼개 담음
+			String splitsnumVal[] = snumVal.split(",");
+
+			// sql snum 형식이 int 이기 때문에 int 배열에 다시 담음
+			int intsnumVal[] = new int[splitsnumVal.length];
+
+			for (int i = 0; i < splitsnumVal.length; i++) {
+				intsnumVal[i] = Integer.parseInt(splitsnumVal[i]);
+			}
+
+			List<MusicVO> list = new ArrayList<MusicVO>();
+			for (int i = 0; i < intsnumVal.length; i++) {
+				vo.setSnum(intsnumVal[i]);
+				list.add(service.selectOne(vo));
+			}
+			if (list != null) {
+				if ("U".equals(request.getParameter("jcode"))) {
+					// 셔플 함수 참고
+					// https://zetawiki.com/wiki/%ED%95%A8%EC%88%98_shuffle()
+					Collections.shuffle(list);
+				}
+				mv.addObject("Banana", list);
+				mv.setViewName("musicview/playlist");
+			}
+
+			return mv;
+		} // playlist
 
 	// ** Image DownLoad
 	   @RequestMapping(value = "/dnload")

@@ -5,7 +5,67 @@
 
 <!-- ******************************* -->
 <select id="selectList" resultType="vo.MusicVO">
-	 select * from music order by snum
+	 select * from music order by releasedate desc , sname
+</select>
+
+<select id="selectOne" resultType="vo.MusicVO"> <!-- 노래 재생목록을 위한 sql  -->
+
+	  select snum, sname, stitle, singername, releasedate, genre, 
+      replace(lyrics,'-','') lyrics, country, musicurl, 
+      downloadfile, image, count from music where snum=#{snum}
+      
+</select>
+
+
+<update id="musicCount"> <!-- count를 위한 sql -->
+	UPDATE music set count=#{count} WHERE snum=#{snum}
+</update>
+
+<!-- 검색 및 페이징 부분 -->
+<sql id="search">
+  <if test="keyword != null">
+  	<bind name="keyVal" value="'%'+keyword+'%'"/>
+  </if>	
+  <choose>
+  	<when test="searchType=='t'.toString()">
+  		and title Like #{keyVal} )
+  		<!-- and title Like  CONCAT('%',CONCAT(#{keyword},'%')) -->
+  	</when>
+  	<when test="searchType=='c'.toString()">
+  		and content Like #{keyVal} )
+  	</when>
+  	
+  	<when test="searchType=='tc'.toString()">
+  		and title   Like  '%' || #{keyword} || '%' 
+  		or  content Like  '%' || #{keyword} || '%')
+  	</when>
+  	<otherwise>)</otherwise> 
+  </choose>
+</sql>
+
+<select id="searchRowCount" resultType="int">
+<![CDATA[ 	
+	select count(*) from music where ( snum > 0 ]]>
+	<!-- 조건 id : search -->
+	<include refid="search"></include>
+</select>
+
+ <select id="searchMList" resultType="vo.MusicVO">
+ <![CDATA[
+ select image,sname,singername,stitle,rnum from
+ (select m.* , ROW_NUMBER() OVER(order by seq desc) rnum from music m 
+   where snum > 0 ]]>
+  <include refid="search"></include>
+  where rnum between #{sno} and #{eno}
+</select>
+ 
+<!-- PageList -->
+<select id="totalRowCount" resultType="int">
+	select count(*) from music
+</select>
+<select id="pageList" resultType="vo.MusicVO">
+  select image,sname,singername,stitle,rnum  
+  from music where rnum between #{sno} and #{eno}
 </select>
 
 </mapper>  

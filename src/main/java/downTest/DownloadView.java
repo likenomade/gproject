@@ -53,7 +53,7 @@ public class DownloadView extends AbstractView{
         if(ie){
             fileName = URLEncoder.encode(file.getName(), "utf-8");
         } else {
-            fileName = new String(file.getName().getBytes("utf-8"));
+            fileName = new String(file.getName().getBytes("utf-8"), "ISO-8859-1");
         }// end if;
  
          

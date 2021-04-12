@@ -78,6 +78,8 @@ a {
 
 #searchdiv {
 	height: 80px;
+	padding: 22px 10px 21px 124px;
+	/* height: 50px; */
 }
 
 #topmenu {
@@ -232,6 +234,26 @@ a {
 	</script>
 </c:if>
 
+<script>  
+   /*  ---------------검색창------------------ */
+   $(function(){
+	// SearchType 이 '---' 면 keyword 클리어
+	$('#searchType').change(function(){
+		if($(this).val() == 'n'){
+			$('#keyword').val('');
+		}
+	});
+	$('#searchBtn').on("click", function() {
+  		self.location="faq"
+		+"${pageMaker.makeQuery(1)}"
+		+"&searchType="
+		+$('#searchType').val()
+		+"&keyword=" 
+		+$('#keyword').val();  
+	}); //click 
+}) ; //ready 
+</script>
+
 </head>
 <body>
 	<div id="header">
@@ -265,10 +287,22 @@ a {
 
 	<div id="nav">
 		<div id="searchdiv">
-			<a href="home" id="logofont">GMUSIC</a> <input type="text"
-				name="keyword" id="keyword" maxlength="10" size="50"
-				style="vertical-align: middle;">
-			<button id="searchBtn" style="vertical-align: middle;">Search</button>
+			<a href="home" id="logofont">GMUSIC</a>
+			  <%-- <input type="text" name="keyword" id="keyword" maxlength="10" size="50"
+				style="vertical-align: middle;" value="${pageMaker.cri.keyword}>  --%>
+ 		<select name="searchType" id="searchType">
+			<option value="t"
+				<c:out value="${pageMaker.cri.searchType=='t' ? 'selected' : ''}"/>>
+				Title</option>
+			<option value="c"
+				<c:out value="${pageMaker.cri.searchType=='c' ? 'selected' : ''}"/>>
+				Content</option>
+			<option value="tc"
+				<c:out value="${pageMaker.cri.searchType=='tc' ? 'selected' : ''}"/>>
+				Title or Content</option>
+		</select>   <input type="text" name="keyword" id="keyword" maxlength="10" size="50"
+				style="vertical-align: middle;"value="${pageMaker.cri.keyword}">  
+		<!-- <button id="searchBtn" style="vertical-align: middle;">Search</button>  -->
 		</div>
 		<hr>
 		<div id="topmenu"></div>
@@ -277,25 +311,7 @@ a {
 	<div id="section">
 		<div id="sec1">
 			<div>
-				<a href="musictest">musictest</a>
-				<%-- <table width=800 border="1">
-					<tr align="center" height="30" bgcolor="pink">
-						<td>sname</td>
-						<td>stitle</td>
-						<td>downloadfile</td>
-						<td>Image</td>
-					</tr>
-					<c:forEach var="row" items="${Banana}">
-						<tr>
-							<td><a href="mdetail?id=${row.id}">${row.id}</a></td>
-							<td>${row.sname}</td>
-							<td>${row.stitle}</td>
-							<td>${row.downloadfile}</td>
-							<td><img src="${row.image}" width="70" height="70">
-							</td>
-						</tr>
-					</c:forEach>
-				</table> --%>
+				
 			</div>
 			<div>아</div>
 			<div>아</div>

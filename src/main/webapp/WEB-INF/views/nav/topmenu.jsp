@@ -9,7 +9,7 @@
 <body>
 	<ul>
 		<li><a href="javascript:;">공지사항 </a>
-		<li><a href="javascript:;">최신음악</a>
+		<li><a href="musiclist">최신음악</a>
 		<li><a href="javascript:;">순위차트</a>
 			<ul>
 				<li><a href="javascript:;">일간차트</a>

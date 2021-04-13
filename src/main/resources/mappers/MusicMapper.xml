@@ -9,11 +9,9 @@
 </select>
 
 <select id="selectOne" resultType="vo.MusicVO"> <!-- 노래 재생목록을 위한 sql  -->
-
 	  select snum, sname, stitle, singername, releasedate, genre, 
       replace(lyrics,'-','') lyrics, country, musicurl, 
       downloadfile, image, count from music where snum=#{snum}
-      
 </select>
 
 
@@ -27,17 +25,16 @@
   	<bind name="keyVal" value="'%'+keyword+'%'"/>
   </if>	
   <choose>
-  	<when test="searchType=='t'.toString()">
-  		and title Like #{keyVal} )
+  	<when test="searchtype=='snm'.toString()">
+  		and sname Like #{keyVal} )
   		<!-- and title Like  CONCAT('%',CONCAT(#{keyword},'%')) -->
   	</when>
-  	<when test="searchType=='c'.toString()">
-  		and content Like #{keyVal} )
+  	<when test="searchtype=='sgr'.toString()">
+  		and singername Like #{keyVal} )
   	</when>
   	
-  	<when test="searchType=='tc'.toString()">
-  		and title   Like  '%' || #{keyword} || '%' 
-  		or  content Like  '%' || #{keyword} || '%')
+  	<when test="searchtype=='tt'.toString()">
+  		and stitle Like #{keyVal} )
   	</when>
   	<otherwise>)</otherwise> 
   </choose>

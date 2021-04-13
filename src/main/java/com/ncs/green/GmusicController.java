@@ -40,6 +40,7 @@ public class GmusicController {
 		pageMaker.setCri(cri);
 		pageMaker.setTotalRow(service.searchRowCountM(cri)); //ver02
 
+		
 		mv.addObject("pageMaker",pageMaker);
 		mv.setViewName("musicview/musicSearch");		
 		return mv;

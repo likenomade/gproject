@@ -234,24 +234,17 @@ a {
 	</script>
 </c:if>
 
-<script>  
-   /*  ---------------검색창------------------ */
-   $(function(){
-	// SearchType 이 '---' 면 keyword 클리어
-	$('#searchType').change(function(){
-		if($(this).val() == 'n'){
-			$('#keyword').val('');
-		}
-	});
-	$('#searchBtn').on("click", function() {
-  		self.location="faq"
-		+"${pageMaker.makeQuery(1)}"
-		+"&searchType="
-		+$('#searchType').val()
-		+"&keyword=" 
-		+$('#keyword').val();  
-	}); //click 
-}) ; //ready 
+<script>
+const Searching = Search.prototype;
+
+function Search(){
+	this.keyword = document.querySelector('input[name="search"]');
+	this.engine = document.querySelector('SelectSearch');
+	this.button = document.querySelector('.img-button');
+	this.form = document.querySelector('.search');
+	this.Engine();
+}
+
 </script>
 
 </head>
@@ -288,22 +281,27 @@ a {
 	<div id="nav">
 		<div id="searchdiv">
 			<a href="home" id="logofont">GMUSIC</a>
-			  <%-- <input type="text" name="keyword" id="keyword" maxlength="10" size="50"
-				style="vertical-align: middle;" value="${pageMaker.cri.keyword}>  --%>
- 		<select name="searchType" id="searchType">
-			<option value="t"
-				<c:out value="${pageMaker.cri.searchType=='t' ? 'selected' : ''}"/>>
-				Title</option>
-			<option value="c"
-				<c:out value="${pageMaker.cri.searchType=='c' ? 'selected' : ''}"/>>
-				Content</option>
-			<option value="tc"
-				<c:out value="${pageMaker.cri.searchType=='tc' ? 'selected' : ''}"/>>
-				Title or Content</option>
-		</select>   <input type="text" name="keyword" id="keyword" maxlength="10" size="50"
-				style="vertical-align: middle;"value="${pageMaker.cri.keyword}">  
-		<!-- <button id="searchBtn" style="vertical-align: middle;">Search</button>  -->
+			
+			<form class="search">
+			<button class="img-button" type="submit" name="click" value=""></button>
+			<input class = 'keyword' type = 'text' name='search' maxlength=255 value="" autocomplete="off">
+			<select class='SelectSearch' name='WhichSearch'>
+							<option id='google' value='google'>Google</option>
+							<option id='naver' value='naver'>Naver</option>
+			</select>
+			
+			</form>
+			
+			
+				<%-- <input type="text" name="keyword" id="keyword" maxlength="10"
+				size="50" style="vertical-align: middle;" value="${pageMaker.cri.keyword}">  
+		<a href="musicsearch"> <button id="searchBtn" style="vertical-align: middle;">Search</button> </a> --%>
+		
+		
 		</div>
+		
+		
+		
 		<hr>
 		<div id="topmenu"></div>
 		<!-- topmenu -->

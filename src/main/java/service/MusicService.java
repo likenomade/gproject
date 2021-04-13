@@ -11,6 +11,9 @@ public interface MusicService {
 	public List<MusicVO> selectList();
 	public MusicVO selectOne(MusicVO vo);
 	public void musicCount(MusicVO vo);
+	
+	
+	//검색 페이징 부분 추가
 	// ** SearchCriteria PageList
 	public int searchRowCountM(Criteria cri) ;
 	public List<MusicVO> searchMList(Criteria cri) ;

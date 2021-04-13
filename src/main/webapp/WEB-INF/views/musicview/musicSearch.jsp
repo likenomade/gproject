@@ -104,45 +104,6 @@
 
 </script>
 
-<!-- <script>
-   var keydownCtrl = 0;
-   var kedownShift = 0;
-
-   document.onkeydown = keycheck;
-   document.onkeyup = uncheckCtrlShift;
-
-   function keycheck() {
-      switch (event.keyCode) {
-      case 123:
-         event.keyCode = '';
-         return false;
-         break;
-      case 17:
-         event.keyCode = '';
-         keydownCtrl = 1;
-         return false;
-         break;
-      }
-      if (keydownCtrl)
-         return false;
-
-   }
-
-   function uncheckCtrlShift() {
-      if (event.keyCode == 17)
-         keydownCtrl = 0;
-      if (event.keyCode == 16)
-         keydownShift = 0;
-
-   }
-
-   function click() {
-      if ((event.button == 2) || (event.button == 2)) {
-         alert('마우스 오른쪽 / 컨트롤 / F12 금지입니다');
-      }
-   }
-   document.onmousedown = click;
-</script> -->
 
 </head>
 <body>
@@ -183,5 +144,42 @@
          </c:forEach>
       </table>
    </form>
+   
+   
+   	<!-- ------------------페이징---------------------------->
+	<!--** Page Criteria 추가   
+    1) First << ,  Prev < : enabled 여부
+    2) sPage~ePage 까지 displayPageNo 값 만큼 출력, 
+    3) Next >  ,   Last >> : enabled 여부
+	-->
+<div  align="center"style="font-size: 20px; ">
+	<!-- ** ver01 : pageMaker.makeQuery(?) -->
+	<!-- ** ver02 : pageMaker.searchQuery(?)  -->
+	<!-- 1) First << ,  Prev < : enabled 여부 -->
+	<c:if test="${pageMaker.prev && pageMaker.sPageNo>1 }">
+		<a href="musicsearch${pageMaker.searchQuery(1)}">First</a>&nbsp;  
+		<!-- "bpage?currPage=1" -->
+		<a href="musicsearch${pageMaker.searchQuery(pageMaker.sPageNo-1)}">Prev</a>&nbsp;&nbsp;
+	</c:if>
+	
+	<!-- 2) sPage~ePage 까지 displayPageNo 값 만큼 출력, -->
+	<c:forEach var="i" begin="${pageMaker.sPageNo}" end="${pageMaker.ePageNo}">
+		<c:if test="${i==pageMaker.cri.currPage}">
+			<font size="5" color="Orange">${i}&nbsp;</font>
+		</c:if>
+		<c:if test="${i!=pageMaker.cri.currPage}">
+			<a href="musicsearch${pageMaker.searchQuery(i)}">${i}</a>&nbsp;
+		</c:if>
+		<!-- 삼항식과 비교  
+		<c:out value="${i==pageMaker.cri.currPage ? 'class=active' : '' }"/>
+		-->
+	</c:forEach>
+		
+	<!-- 3) Next >  ,   Last >> : enabled 여부	 -->
+	<c:if test="${pageMaker.next && pageMaker.ePageNo>0}">
+		<a href="musicsearch${pageMaker.searchQuery(pageMaker.ePageNo+1)}">&nbsp;&nbsp;Next</a>&nbsp;  
+		<a href="musicsearch${pageMaker.searchQuery(pageMaker.lastPageNo)}">Last</a>&nbsp;&nbsp;
+	</c:if>
+   
 </body>
 </html>

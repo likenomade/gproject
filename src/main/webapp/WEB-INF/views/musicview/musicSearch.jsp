@@ -4,7 +4,7 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>최신음악</title>
+<title>검색음악</title>
 <script src="resources/myLib/jquery-3.2.1.min.js"></script>
 <script>
    $(function() { //ready
@@ -53,15 +53,14 @@
          window.open(url, "myview",
                      "toolbar=no,menubar=yes,scrollbars=no,resizable=no,width=700,height=800");
        
-         document.musiclist.action =url;
-         document.musiclist.method="post";
-         document.musiclist.target="myview";
+         document.musicSearch.action =url;
+         document.musicSearch.method="post";
+         document.musicSearch.target="myview";
          
          $('input[name=snumVal]').attr('value',buttonSnumVal);
       
          document.musiclist.submit();
       });
-      
    });//ready *
    
    
@@ -88,9 +87,9 @@
       window.open(url, "myview",
                   "toolbar=no,menubar=yes,scrollbars=no,resizable=no,width=700,height=800");
     
-      document.musiclist.action =url;
-      document.musiclist.method="post";
-      document.musiclist.target="myview";
+      document.musicSearch.action =url;
+      document.musicSearch.method="post";
+      document.musicSearch.target="myview";
       
       // 항목 추가 실험중 넣으면 항목 추가됨
       //var addsnumVal = $('input[name=snumVal]').val();
@@ -99,15 +98,14 @@
       //}else{
          $('input[name=snumVal]').attr('value',result);
       //}
-      document.musiclist.submit();
+      document.musicSearch.submit();
    }
-
 </script>
 
 
 </head>
 <body>
-   <form name="musiclist">
+  <form name="musicSearch">
       <button type="button" onclick="getCheckboxValue()">플레이리스트</button>
       <div id='result'></div>
       <input type="hidden" id="snumVal" name="snumVal" value="">
@@ -145,7 +143,6 @@
       </table>
    </form>
    
-   
    	<!-- ------------------페이징---------------------------->
 	<!--** Page Criteria 추가   
     1) First << ,  Prev < : enabled 여부
@@ -157,9 +154,9 @@
 	<!-- ** ver02 : pageMaker.searchQuery(?)  -->
 	<!-- 1) First << ,  Prev < : enabled 여부 -->
 	<c:if test="${pageMaker.prev && pageMaker.sPageNo>1 }">
-		<a href="musicsearch${pageMaker.searchQuery(1)}">First</a>&nbsp;  
+		<a href="mSearch${pageMaker.searchQuery(1)}">First</a>&nbsp;  
 		<!-- "bpage?currPage=1" -->
-		<a href="musicsearch${pageMaker.searchQuery(pageMaker.sPageNo-1)}">Prev</a>&nbsp;&nbsp;
+		<a href="mSearch${pageMaker.searchQuery(pageMaker.sPageNo-1)}">Prev</a>&nbsp;&nbsp;
 	</c:if>
 	
 	<!-- 2) sPage~ePage 까지 displayPageNo 값 만큼 출력, -->
@@ -168,7 +165,7 @@
 			<font size="5" color="Orange">${i}&nbsp;</font>
 		</c:if>
 		<c:if test="${i!=pageMaker.cri.currPage}">
-			<a href="musicsearch${pageMaker.searchQuery(i)}">${i}</a>&nbsp;
+			<a href="mSearch${pageMaker.searchQuery(i)}">${i}</a>&nbsp;
 		</c:if>
 		<!-- 삼항식과 비교  
 		<c:out value="${i==pageMaker.cri.currPage ? 'class=active' : '' }"/>
@@ -177,8 +174,8 @@
 		
 	<!-- 3) Next >  ,   Last >> : enabled 여부	 -->
 	<c:if test="${pageMaker.next && pageMaker.ePageNo>0}">
-		<a href="musicsearch${pageMaker.searchQuery(pageMaker.ePageNo+1)}">&nbsp;&nbsp;Next</a>&nbsp;  
-		<a href="musicsearch${pageMaker.searchQuery(pageMaker.lastPageNo)}">Last</a>&nbsp;&nbsp;
+		<a href="mSearch${pageMaker.searchQuery(pageMaker.ePageNo+1)}">&nbsp;&nbsp;Next</a>&nbsp;  
+		<a href="mSearch${pageMaker.searchQuery(pageMaker.lastPageNo)}">Last</a>&nbsp;&nbsp;
 	</c:if>
    
 </body>

@@ -14,7 +14,6 @@
       downloadfile, image, count from music where snum=#{snum}
 </select>
 
-
 <update id="musicCount"> <!-- count를 위한 sql -->
 	UPDATE music set count=#{count} WHERE snum=#{snum}
 </update>
@@ -25,17 +24,39 @@
   	<bind name="keyVal" value="'%'+keyword+'%'"/>
   </if>	
   <choose>
-  	<when test="searchtype=='snm'.toString()">
-  		and sname Like #{keyVal} )
+  	<when test="searchType=='snm'.toString()">
+  		and upper(sname) Like upper(#{keyVal}))
   		<!-- and title Like  CONCAT('%',CONCAT(#{keyword},'%')) -->
   	</when>
-  	<when test="searchtype=='sgr'.toString()">
-  		and singername Like #{keyVal} )
+  	<when test="searchType=='sgr'.toString()">
+  		and upper(singername) Like upper(#{keyVal}))
   	</when>
   	
-  	<when test="searchtype=='tt'.toString()">
-  		and stitle Like #{keyVal} )
+  	<when test="searchType=='tt'.toString()">
+  		and upper(stitle) Like upper(#{keyVal}))
   	</when>
+  	
+  	  	<when test="searchType=='ly'.toString()">
+  		and upper(genre) Like upper(#{keyVal}))
+  	</when>
+  	
+  	<when test="searchType=='gne'.toString()">
+  		and genre Like #{keyVal} )
+  	</when>
+  	
+  	  	<when test="searchType=='snm/sgr'.toString()">
+  		and upper(sname)    Like  '%' || #{keyword} || '%' 
+  		or  upper(singername)Like  '%' || #{keyword} || '%')
+  		</when>
+  	
+  		  	<when test="searchType=='snm/sgr/tt/ly/gne'.toString()">
+  		and upper(sname) Like  '%' || upper(#{keyword}) || '%' 
+  		and upper(singername) Like  '%' || upper(#{keyword}) || '%' 
+  		and upper(stitle) Like  '%' || upper(#{keyword}) || '%' 
+  		and upper(lyrics) Like  '%' || upper(#{keyword}) || '%' 
+  		or  upper(genre) Like  '%' || upper(#{keyword}) || '%')
+  	</when>
+  	
   	<otherwise>)</otherwise> 
   </choose>
 </sql>
@@ -49,8 +70,8 @@
 
  <select id="searchMList" resultType="vo.MusicVO">
  <![CDATA[
- select image,sname,singername,stitle,rnum from
- (select m.* , ROW_NUMBER() OVER(order by seq desc) rnum from music m 
+ select snum,image,sname,singername,stitle,downloadfile,genre,rnum from
+ (select m.* , ROW_NUMBER() OVER(order by snum desc) rnum from music m 
    where snum > 0 ]]>
   <include refid="search"></include>
   where rnum between #{sno} and #{eno}
@@ -58,10 +79,10 @@
  
 <!-- PageList -->
 <select id="totalRowCount" resultType="int">
-	select count(*) from music
+	select count(*) from snum  <!-- 이곳때문에 페이징이꼬임 뭘쓸까 고민해야됨 -->
 </select>
 <select id="pageList" resultType="vo.MusicVO">
-  select image,sname,singername,stitle,rnum  
+  select snum,image,sname,singername,stitle,downloadfile,genre,rnum  
   from music where rnum between #{sno} and #{eno}
 </select>
 

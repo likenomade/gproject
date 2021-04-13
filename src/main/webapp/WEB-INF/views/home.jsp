@@ -234,19 +234,6 @@ a {
 	</script>
 </c:if>
 
-<script>
-const Searching = Search.prototype;
-
-function Search(){
-	this.keyword = document.querySelector('input[name="search"]');
-	this.engine = document.querySelector('SelectSearch');
-	this.button = document.querySelector('.img-button');
-	this.form = document.querySelector('.search');
-	this.Engine();
-}
-
-</script>
-
 </head>
 <body>
 	<div id="header">
@@ -281,36 +268,38 @@ function Search(){
 	<div id="nav">
 		<div id="searchdiv">
 			<a href="home" id="logofont">GMUSIC</a>
+			<form action="mSearch" id="search" name="search" class="search">
 			
-			<form class="search">
-			<button class="img-button" type="submit" name="click" value=""></button>
-			<input class = 'keyword' type = 'text' name='search' maxlength=255 value="" autocomplete="off">
-			<select class='SelectSearch' name='WhichSearch'>
-							<option id='google' value='google'>Google</option>
-							<option id='naver' value='naver'>Naver</option>
-			</select>
-			
+			<select name="searchType" id="searchType">
+						<option value="snm/sgr/tt/ly/gne"
+				<c:out value="${pageMaker.cri.searchType=='snm/sgr/tt/ly/gne' ? 'selected' : ''}"/>>All</option>
+				<option value="snm"
+					<c:out value="${pageMaker.cri.searchType=='snm'? 'selected' : ''}"/>>sname</option>
+						<option value="sgr" 
+					<c:out value="${pageMaker.cri.searchType=='sgr' ? 'selected' : ''}"/>>singername</option>
+						<option value="tt"
+					<c:out value="${pageMaker.cri.searchType=='tt' ? 'selected' : ''}"/>>stitle</option>
+				<option value="ly"
+				<c:out value="${pageMaker.cri.searchType=='ly' ? 'selected' : ''}"/>>lyrics</option>
+				<option value="gne"
+				<c:out value="${pageMaker.cri.searchType=='gne' ? 'selected' : ''}"/>>genre</option>
+				<option value="snm/sgr"
+				<c:out value="${pageMaker.cri.searchType=='snm/sgr' ? 'selected' : ''}"/>>sname or singername</option>
+	
+		</select> 
+		
+		<input type="text" name="keyword" id="keyword" maxlength="35" size="50"
+		 style="vertical-align: middle;" value="${pageMaker.cri.keyword}">  
+		 <button id="searchBtn" style="vertical-align: middle;">Search</button>
 			</form>
-			
-			
-				<%-- <input type="text" name="keyword" id="keyword" maxlength="10"
-				size="50" style="vertical-align: middle;" value="${pageMaker.cri.keyword}">  
-		<a href="musicsearch"> <button id="searchBtn" style="vertical-align: middle;">Search</button> </a> --%>
-		
-		
 		</div>
-		
-		
-		
 		<hr>
 		<div id="topmenu"></div>
 		<!-- topmenu -->
 	</div>
 	<div id="section">
 		<div id="sec1">
-			<div>
-				
-			</div>
+			<div></div>
 			<div>아</div>
 			<div>아</div>
 		</div>
@@ -326,9 +315,8 @@ function Search(){
 						<div id="loginsuccess">
 							<div id="welcome" style="font-size: 23px">
 								<img src="resources/uploadImage/basicman1.jpg" width="40"
-									height="40">${loginID}님 환영합니다!!<br>
-								<br> <a href="mlogout"><button type="button"
-										id=logout_btn>로그아웃</button></a>
+									height="40">${loginID}님 환영합니다!!<br> <br> <a
+									href="mlogout"><button type="button" id=logout_btn>로그아웃</button></a>
 								<!-- &nbsp;  -->
 								<a href="mypage?id=${loginID}"><button type="button"
 										id=logout_btn>내정보</button></a>

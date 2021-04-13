@@ -28,10 +28,9 @@ public class GmusicController {
 	
 	@Autowired
 	MusicService service;
-
 	
-	@RequestMapping(value = "/musicsearch")
-	public ModelAndView musicsearch(ModelAndView mv, HttpServletRequest request,Criteria cri, PageMaker pageMaker) {
+	@RequestMapping(value = "/mSearch")
+	public ModelAndView mSearch(ModelAndView mv, HttpServletRequest request,Criteria cri, PageMaker pageMaker) {
 
 		cri.setSnoEno();
 		mv.addObject("Banana", service.searchMList(cri)); 
@@ -40,13 +39,11 @@ public class GmusicController {
 		pageMaker.setCri(cri);
 		pageMaker.setTotalRow(service.searchRowCountM(cri)); //ver02
 
-		
 		mv.addObject("pageMaker",pageMaker);
-		mv.setViewName("musicview/musicSearch");		
+		
+		mv.setViewName("musicview/musicSearch");	
 		return mv;
-	} //musicsearch
-	
-	
+	} //mSearch
 	
 	@RequestMapping(value = "/musicCount")
 	   public void musicCount(HttpServletRequest request, ModelAndView mv, MusicVO vo) {
@@ -54,7 +51,6 @@ public class GmusicController {
 	      vo.setCount(vo.getCount()+1); //count + 1
 	      service.musicCount(vo);
 	   }
-
 	
 	//musiclist
 		@RequestMapping(value = "/musiclist")

@@ -12,7 +12,7 @@ tr {
    text-align: center;
 }
 </style>
-<script>
+<!-- <script>
    var keydownCtrl = 0;
    var kedownShift = 0;
 
@@ -50,7 +50,7 @@ tr {
       }
    }
    document.onmousedown = click;
-</script>
+</script> -->
 <script>
    // select box jquery 활용법
    // https://jaweb.tistory.com/entry/Jquery-Select-Box-활용-노하우 참고
@@ -59,7 +59,7 @@ tr {
    // select box 인덱스의 첫번째가 선택되고 플레이시킴(첫 인덱스 플레이 기능)
    function autoplay() {
       $("#playlist option:first").prop("selected", true);    // 노래 리스트의 첫곡을 선택 (select의 상태를 true로 활성화)
-      nowplay();                                  // 현재곡 재생함수
+      nowplay();      // 현재곡 재생함수
 
    } //autoplay
 

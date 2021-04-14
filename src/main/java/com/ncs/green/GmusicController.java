@@ -33,6 +33,7 @@ public class GmusicController {
 	public ModelAndView mSearch(ModelAndView mv, HttpServletRequest request,Criteria cri, PageMaker pageMaker) {
 
 		cri.setSnoEno();
+		
 		mv.addObject("Banana", service.searchMList(cri)); 
 
 		// 3) PageMaker 처리

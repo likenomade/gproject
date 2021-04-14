@@ -6,6 +6,12 @@
 <meta charset="UTF-8">
 <title>검색음악</title>
 <script src="resources/myLib/jquery-3.2.1.min.js"></script>
+<style>
+#totalsearch{
+margin: 64px 449px -8px;
+}
+
+</style>
 <script>
    $(function() { //ready
 
@@ -59,7 +65,7 @@
          
          $('input[name=snumVal]').attr('value',buttonSnumVal);
       
-         document.musiclist.submit();
+         document.musicSearch.submit();
       });
    });//ready *
    
@@ -105,12 +111,14 @@
 
 </head>
 <body>
-  <form name="musicSearch">
+	<!-- 통합검색 -->
+	 <form id="totalsearch" name="musicSearch" align="center" >
+  <h1>통합검색결과</h1>
       <button type="button" onclick="getCheckboxValue()">플레이리스트</button>
       <div id='result'></div>
       <input type="hidden" id="snumVal" name="snumVal" value="">
-      <table style="width: 1200px;" border="1">
-         <tr align="center" height="2" bgcolor="pink">
+      <table style="width: 1200px;" border="1" >
+         <tr align="center" height="2" bgcolor="#0b3f9a" >
             <td width="50">
                <input type="checkbox" id="check_all" name="check_all">
             </td>
@@ -177,6 +185,237 @@
 		<a href="mSearch${pageMaker.searchQuery(pageMaker.ePageNo+1)}">&nbsp;&nbsp;Next</a>&nbsp;  
 		<a href="mSearch${pageMaker.searchQuery(pageMaker.lastPageNo)}">Last</a>&nbsp;&nbsp;
 	</c:if>
+	</div>
+
+<!-- 통합검색 -->
+	 <form id="totalsearch" name="musicSearch" align="center" >
+  <h1>곡 검색</h1>
+      <button type="button" onclick="getCheckboxValue()">플레이리스트</button>
+      <div id='result'></div>
+      <input type="hidden" id="snumVal" name="snumVal" value="">
+      <table style="width: 1200px;" border="1" >
+         <tr align="center" height="2" bgcolor="#0b3f9a" >
+            <td width="50">
+               <input type="checkbox" id="check_all" name="check_all">
+            </td>
+            <td width="40">번 호</td>
+            <td>Image</td>
+            <td>곡 명</td>
+            <td>가 수</td>
+            <td>앨범명</td>
+            <td>downloadfile</td>
+         </tr>
+         <c:forEach var="row" items="${Banana}" varStatus="vs">
+            <tr>
+               <td align="center">
+                  <input type="checkbox" class="normalCheck" id="snum${row.snum}" name="snum" value="${row.snum}">
+               </td>
+               <td align="center">${vs.count}</td>
+               <td>
+                  <img src="${row.image}" width="70" height="70">
+               </td>
+               <td>
+                  <button type="button" name="sname" value="${row.snum}">${row.sname}</button>
+               </td>
+               <td>${row.singername}</td>
+               <td>${row.stitle}</td>
+               <td>
+                  <a href="dnload?dnfile=${row.downloadfile}">${row.downloadfile}</a>
+               </td>
+            </tr>
+         </c:forEach>
+      </table>
+   </form>
+   
+   	<!-- ------------------페이징---------------------------->
+	<!--** Page Criteria 추가   
+    1) First << ,  Prev < : enabled 여부
+    2) sPage~ePage 까지 displayPageNo 값 만큼 출력, 
+    3) Next >  ,   Last >> : enabled 여부
+	-->
+<div  align="center"style="font-size: 20px; ">
+	<!-- ** ver01 : pageMaker.makeQuery(?) -->
+	<!-- ** ver02 : pageMaker.searchQuery(?)  -->
+	<!-- 1) First << ,  Prev < : enabled 여부 -->
+	<c:if test="${pageMaker.prev && pageMaker.sPageNo>1 }">
+		<a href="mSearch${pageMaker.searchQuery(1)}">First</a>&nbsp;  
+		<!-- "bpage?currPage=1" -->
+		<a href="mSearch${pageMaker.searchQuery(pageMaker.sPageNo-1)}">Prev</a>&nbsp;&nbsp;
+	</c:if>
+	
+	<!-- 2) sPage~ePage 까지 displayPageNo 값 만큼 출력, -->
+	<c:forEach var="i" begin="${pageMaker.sPageNo}" end="${pageMaker.ePageNo}">
+		<c:if test="${i==pageMaker.cri.currPage}">
+			<font size="5" color="Orange">${i}&nbsp;</font>
+		</c:if>
+		<c:if test="${i!=pageMaker.cri.currPage}">
+			<a href="mSearch${pageMaker.searchQuery(i)}">${i}</a>&nbsp;
+		</c:if>
+		<!-- 삼항식과 비교  
+		<c:out value="${i==pageMaker.cri.currPage ? 'class=active' : '' }"/>
+		-->
+	</c:forEach>
+		
+	<!-- 3) Next >  ,   Last >> : enabled 여부	 -->
+	<c:if test="${pageMaker.next && pageMaker.ePageNo>0}">
+		<a href="mSearch${pageMaker.searchQuery(pageMaker.ePageNo+1)}">&nbsp;&nbsp;Next</a>&nbsp;  
+		<a href="mSearch${pageMaker.searchQuery(pageMaker.lastPageNo)}">Last</a>&nbsp;&nbsp;
+	</c:if>
+	</div>
+	
+	<!-- 통합검색 -->
+	 <form id="totalsearch" name="musicSearch" align="center" >
+  <h1>아티스트명으로 검색</h1>
+      <button type="button" onclick="getCheckboxValue()">플레이리스트</button>
+      <div id='result'></div>
+      <input type="hidden" id="snumVal" name="snumVal" value="">
+      <table style="width: 1200px;" border="1" >
+         <tr align="center" height="2" bgcolor="#0b3f9a" >
+            <td width="50">
+               <input type="checkbox" id="check_all" name="check_all">
+            </td>
+            <td width="40">번 호</td>
+            <td>Image</td>
+            <td>곡 명</td>
+            <td>가 수</td>
+            <td>앨범명</td>
+            <td>downloadfile</td>
+         </tr>
+         <c:forEach var="row" items="${Banana}" varStatus="vs">
+            <tr>
+               <td align="center">
+                  <input type="checkbox" class="normalCheck" id="snum${row.snum}" name="snum" value="${row.snum}">
+               </td>
+               <td align="center">${vs.count}</td>
+               <td>
+                  <img src="${row.image}" width="70" height="70">
+               </td>
+               <td>
+                  <button type="button" name="sname" value="${row.snum}">${row.sname}</button>
+               </td>
+               <td>${row.singername}</td>
+               <td>${row.stitle}</td>
+               <td>
+                  <a href="dnload?dnfile=${row.downloadfile}">${row.downloadfile}</a>
+               </td>
+            </tr>
+         </c:forEach>
+      </table>
+   </form>
+   
+   	<!-- ------------------페이징---------------------------->
+	<!--** Page Criteria 추가   
+    1) First << ,  Prev < : enabled 여부
+    2) sPage~ePage 까지 displayPageNo 값 만큼 출력, 
+    3) Next >  ,   Last >> : enabled 여부
+	-->
+<div  align="center"style="font-size: 20px; ">
+	<!-- ** ver01 : pageMaker.makeQuery(?) -->
+	<!-- ** ver02 : pageMaker.searchQuery(?)  -->
+	<!-- 1) First << ,  Prev < : enabled 여부 -->
+	<c:if test="${pageMaker.prev && pageMaker.sPageNo>1 }">
+		<a href="mSearch${pageMaker.searchQuery(1)}">First</a>&nbsp;  
+		<!-- "bpage?currPage=1" -->
+		<a href="mSearch${pageMaker.searchQuery(pageMaker.sPageNo-1)}">Prev</a>&nbsp;&nbsp;
+	</c:if>
+	
+	<!-- 2) sPage~ePage 까지 displayPageNo 값 만큼 출력, -->
+	<c:forEach var="i" begin="${pageMaker.sPageNo}" end="${pageMaker.ePageNo}">
+		<c:if test="${i==pageMaker.cri.currPage}">
+			<font size="5" color="Orange">${i}&nbsp;</font>
+		</c:if>
+		<c:if test="${i!=pageMaker.cri.currPage}">
+			<a href="mSearch${pageMaker.searchQuery(i)}">${i}</a>&nbsp;
+		</c:if>
+		<!-- 삼항식과 비교  
+		<c:out value="${i==pageMaker.cri.currPage ? 'class=active' : '' }"/>
+		-->
+	</c:forEach>
+		
+	<!-- 3) Next >  ,   Last >> : enabled 여부	 -->
+	<c:if test="${pageMaker.next && pageMaker.ePageNo>0}">
+		<a href="mSearch${pageMaker.searchQuery(pageMaker.ePageNo+1)}">&nbsp;&nbsp;Next</a>&nbsp;  
+		<a href="mSearch${pageMaker.searchQuery(pageMaker.lastPageNo)}">Last</a>&nbsp;&nbsp;
+	</c:if>
+	</div>
+	
+	<!-- 통합검색 -->
+	 <form id="totalsearch" name="musicSearch" align="center" >
+  <h1>가사 검색</h1>
+      <button type="button" onclick="getCheckboxValue()">플레이리스트</button>
+      <div id='result'></div>
+      <input type="hidden" id="snumVal" name="snumVal" value="">
+      <table style="width: 1200px;" border="1" >
+         <tr align="center" height="2" bgcolor="#0b3f9a" >
+            <td width="50">
+               <input type="checkbox" id="check_all" name="check_all">
+            </td>
+            <td width="40">번 호</td>
+            <td>Image</td>
+            <td>곡 명</td>
+            <td>가 수</td>
+            <td>앨범명</td>
+            <td>downloadfile</td>
+         </tr>
+         <c:forEach var="row" items="${Banana}" varStatus="vs">
+            <tr>
+               <td align="center">
+                  <input type="checkbox" class="normalCheck" id="snum${row.snum}" name="snum" value="${row.snum}">
+               </td>
+               <td align="center">${vs.count}</td>
+               <td>
+                  <img src="${row.image}" width="70" height="70">
+               </td>
+               <td>
+                  <button type="button" name="sname" value="${row.snum}">${row.sname}</button>
+               </td>
+               <td>${row.singername}</td>
+               <td>${row.stitle}</td>
+               <td>
+                  <a href="dnload?dnfile=${row.downloadfile}">${row.downloadfile}</a>
+               </td>
+            </tr>
+         </c:forEach>
+      </table>
+   </form>
+   
+   	<!-- ------------------페이징---------------------------->
+	<!--** Page Criteria 추가   
+    1) First << ,  Prev < : enabled 여부
+    2) sPage~ePage 까지 displayPageNo 값 만큼 출력, 
+    3) Next >  ,   Last >> : enabled 여부
+	-->
+<div  align="center"style="font-size: 20px; ">
+	<!-- ** ver01 : pageMaker.makeQuery(?) -->
+	<!-- ** ver02 : pageMaker.searchQuery(?)  -->
+	<!-- 1) First << ,  Prev < : enabled 여부 -->
+	<c:if test="${pageMaker.prev && pageMaker.sPageNo>1 }">
+		<a href="mSearch${pageMaker.searchQuery(1)}">First</a>&nbsp;  
+		<!-- "bpage?currPage=1" -->
+		<a href="mSearch${pageMaker.searchQuery(pageMaker.sPageNo-1)}">Prev</a>&nbsp;&nbsp;
+	</c:if>
+	
+	<!-- 2) sPage~ePage 까지 displayPageNo 값 만큼 출력, -->
+	<c:forEach var="i" begin="${pageMaker.sPageNo}" end="${pageMaker.ePageNo}">
+		<c:if test="${i==pageMaker.cri.currPage}">
+			<font size="5" color="Orange">${i}&nbsp;</font>
+		</c:if>
+		<c:if test="${i!=pageMaker.cri.currPage}">
+			<a href="mSearch${pageMaker.searchQuery(i)}">${i}</a>&nbsp;
+		</c:if>
+		<!-- 삼항식과 비교  
+		<c:out value="${i==pageMaker.cri.currPage ? 'class=active' : '' }"/>
+		-->
+	</c:forEach>
+		
+	<!-- 3) Next >  ,   Last >> : enabled 여부	 -->
+	<c:if test="${pageMaker.next && pageMaker.ePageNo>0}">
+		<a href="mSearch${pageMaker.searchQuery(pageMaker.ePageNo+1)}">&nbsp;&nbsp;Next</a>&nbsp;  
+		<a href="mSearch${pageMaker.searchQuery(pageMaker.lastPageNo)}">Last</a>&nbsp;&nbsp;
+	</c:if>
+	</div>
+	
+	 
    
 </body>
 </html>

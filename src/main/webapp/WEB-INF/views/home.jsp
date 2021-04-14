@@ -272,18 +272,18 @@ a {
 			
 			<select name="searchType" id="searchType">
 						<option value="snm/sgr/tt/ly/gne"
-				<c:out value="${pageMaker.cri.searchType=='snm/sgr/tt/ly/gne' ? 'selected' : ''}"/>>All</option>
-				<option value="snm"
+				<c:out value="${pageMaker.cri.searchType=='snm/sgr/tt/ly/gne' ? 'selected' : ''}" />>All</option>
+				<option value="snm"  
 					<c:out value="${pageMaker.cri.searchType=='snm'? 'selected' : ''}"/>>sname</option>
 						<option value="sgr" 
 					<c:out value="${pageMaker.cri.searchType=='sgr' ? 'selected' : ''}"/>>singername</option>
-						<option value="tt"
+						<option value="tt" 
 					<c:out value="${pageMaker.cri.searchType=='tt' ? 'selected' : ''}"/>>stitle</option>
-				<option value="ly"
+				<option value="ly" 
 				<c:out value="${pageMaker.cri.searchType=='ly' ? 'selected' : ''}"/>>lyrics</option>
-				<option value="gne"
+				<option value="gne" 
 				<c:out value="${pageMaker.cri.searchType=='gne' ? 'selected' : ''}"/>>genre</option>
-				<option value="snm/sgr"
+				<option value="snm/sgr" 
 				<c:out value="${pageMaker.cri.searchType=='snm/sgr' ? 'selected' : ''}"/>>sname or singername</option>
 	
 		</select> 

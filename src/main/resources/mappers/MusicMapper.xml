@@ -23,7 +23,7 @@
   <if test="keyword != null">
   	<bind name="keyVal" value="'%'+keyword+'%'"/>
   </if>	
-  <choose>
+   <choose>
   	<when test="searchType=='snm'.toString()">
   		and upper(sname) Like upper(#{keyVal}))
   		<!-- and title Like  CONCAT('%',CONCAT(#{keyword},'%')) -->
@@ -37,7 +37,7 @@
   	</when>
   	
   	  	<when test="searchType=='ly'.toString()">
-  		and upper(genre) Like upper(#{keyVal}))
+  		and upper(lyrics) Like upper(#{keyVal}))
   	</when>
   	
   	<when test="searchType=='gne'.toString()">
@@ -45,20 +45,21 @@
   	</when>
   	
   	  	<when test="searchType=='snm/sgr'.toString()">
-  		and upper(sname)    Like  '%' || #{keyword} || '%' 
-  		or  upper(singername)Like  '%' || #{keyword} || '%')
+  		and upper(sname) Like '%' || upper(#{keyword}) || '%' 
+  		or  upper(singername) Like '%' || upper(#{keyword}) || '%')
   		</when>
   	
-  		  	<when test="searchType=='snm/sgr/tt/ly/gne'.toString()">
+  	<when test="searchType=='snm/sgr/tt/ly/gne'.toString()">   
   		and upper(sname) Like  '%' || upper(#{keyword}) || '%' 
-  		and upper(singername) Like  '%' || upper(#{keyword}) || '%' 
-  		and upper(stitle) Like  '%' || upper(#{keyword}) || '%' 
-  		and upper(lyrics) Like  '%' || upper(#{keyword}) || '%' 
-  		or  upper(genre) Like  '%' || upper(#{keyword}) || '%')
+  		or upper(singername) Like  '%' || upper(#{keyword}) || '%' 
+  		or upper(stitle) Like  '%' || upper(#{keyword}) || '%' 
+  		or lyrics Like  '%' || #{keyword} || '%' 
+  		or  genre Like  '%' || #{keyword} || '%')
   	</when>
   	
   	<otherwise>)</otherwise> 
   </choose>
+  
 </sql>
 
 <select id="searchRowCount" resultType="int">
@@ -79,11 +80,40 @@
  
 <!-- PageList -->
 <select id="totalRowCount" resultType="int">
-	select count(*) from snum  <!-- 이곳때문에 페이징이꼬임 뭘쓸까 고민해야됨 -->
-</select>
-<select id="pageList" resultType="vo.MusicVO">
+	select count(*) from snum 
+</select> 
+
+<select id="pageList" resultType="vo.MusicVO"> 
+<if test="keyword == null">
   select snum,image,sname,singername,stitle,downloadfile,genre,rnum  
-  from music where rnum between #{sno} and #{eno}
+  from music where rnum between #{sno} and #{eno}  <!-- //원래 이문장만 있었음 -->
+</if>
+<!-- 실험 page list 가 과연 다르게 나오는지 -->
+<choose>
+  	<when test="searchType=='snm'.toString()">
+  		 select sname,rnum  
+ 		 from music where rnum between #{sno} and #{eno}
+  	</when>
+  	
+  	<when test="searchType=='sgr'.toString()">
+  		select singername,rnum  
+ 		 from music where rnum between #{sno} and #{eno}
+  	</when>
+  	
+  	  	<when test="searchType=='ly'.toString()">
+  		select lyrics,rnum  
+ 		 from music where rnum between #{sno} and #{eno}
+  	</when>
+  	
+  	<when test="searchType=='gne'.toString()">
+  		select genre,rnum  
+ 		 from music where rnum between #{sno} and #{eno}
+  	</when>
+  	
+  	<otherwise>)</otherwise> 
+  </choose>
+
+
 </select>
 
 </mapper>  

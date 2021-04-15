@@ -38,17 +38,20 @@ public class MusicServiceimpl implements MusicService {
 			}
 		
 		// ** Criteria PageList
-		public int totalRowCount() {
-			return dao.totalRowCount();
+		public int totalRowCountM() {
+			return dao.totalRowCountM();
 		}
 		public List<MusicVO> criMList(Criteria cri) {
 			return dao.criMList(cri);
 		}
-
+		public List<MusicVO> searchNList(Criteria cri){
+		return dao.searchNList(cri);
+		}
+		
 		// ** Page BoardList
 		// => totalRowCount set, 출력할 board row set 
 		public PageVO<MusicVO> pageMList(PageVO<MusicVO> vo) {
-			vo.setTotalRowCount(dao.totalRowCount());
+			vo.setTotalRowCount(dao.totalRowCountM());
 			vo.setList(dao.pageMList(vo));
 			return vo; 
 		}

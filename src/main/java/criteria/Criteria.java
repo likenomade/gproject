@@ -9,7 +9,7 @@ public class Criteria {
 	private int eno;  		// endRno 페이지의 마지막 글
 	
 	private String searchType;
-	private String keyword;
+	public String keyword; //여기도 원래 private 였음.
 	
 	// 기본값 생성자로 초기화
 	public Criteria() {
@@ -87,5 +87,10 @@ public class Criteria {
 		return "Criteria [currPage=" + currPage + ", rowPerPage=" + rowPerPage + ", sno=" + sno + ", eno=" + eno
 				+ ", searchType=" + searchType + ", keyword=" + keyword + "]";
 	}
+
+	public String SearchType() { //home searchType
+		return searchType;
+	}
+
 	
 }// class

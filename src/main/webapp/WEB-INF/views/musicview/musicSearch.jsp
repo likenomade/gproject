@@ -7,7 +7,7 @@
 <title>검색음악</title>
 <script src="resources/myLib/jquery-3.2.1.min.js"></script>
 <style>
-#totalsearch{
+#musicSearch{
 margin: 64px 449px -8px;
 }
 
@@ -18,37 +18,105 @@ margin: 64px 449px -8px;
       // input checkbox
       // https://emessell.tistory.com/149 참고
       //1. 전체 선택, 전체 해제
-      $("#check_all").click(function() {
+      $("#check_all_1").click(function() {
 
          var checked = $(this).is(":checked");
 
          if (checked) {
-            $(".normalCheck").prop('checked', true);
+            $(".normalCheck_1").prop('checked', true);
          } else {
-            $(".normalCheck").prop('checked', false);
+            $(".normalCheck_1").prop('checked', false);
          }
       });
+   
+      $("#check_all_2").click(function() {
 
+          var checked = $(this).is(":checked");
+
+          if (checked) {
+             $(".normalCheck_2").prop('checked', true);
+          } else {
+             $(".normalCheck_2").prop('checked', false);
+          }
+       });
+      
+      $("#check_all_3").click(function() {
+
+          var checked = $(this).is(":checked");
+
+          if (checked) {
+             $(".normalCheck_3").prop('checked', true);
+          } else {
+             $(".normalCheck_3").prop('checked', false);
+          }
+       });
+      
+      $("#check_all_4").click(function() {
+
+          var checked = $(this).is(":checked");
+
+          if (checked) {
+             $(".normalCheck_4").prop('checked', true);
+          } else {
+             $(".normalCheck_4").prop('checked', false);
+          }
+       });
+/* -------------------------------------------전체선택 end---------------------------------------------------------- */
       // 2. 전체선택 후 하나만 해제했을 때, 전체선택도 해체
       // 3. 개별 선택으로 전체 다 선택되었을 때, 전체선택에도 체크
-      $(".normalCheck").click(function() {
-
+      $(".normalCheck_1").click(function() {
          var checked = $(this).is(":checked");
-
          if (!checked) {
-            $("#check_all").prop('checked', false);
+            $("#check_all_1").prop('checked', false);
          } else {
             var is_checked = true;
-
-            $(".normalCheck").each(function() {
+            $(".normalCheck_1").each(function() {
                is_checked = is_checked && $(this).is(":checked");
             });
-
-            $("#check_all").prop("checked", is_checked);
+            $("#check_all_1").prop("checked", is_checked);
          }
-      });
+      });//1
       
+      $(".normalCheck_2").click(function() {
+          var checked = $(this).is(":checked");
+          if (!checked) {
+             $("#check_all_2").prop('checked', false);
+          } else {
+             var is_checked = true;
+             $(".normalCheck_2").each(function() {
+                is_checked = is_checked && $(this).is(":checked");
+             });
+             $("#check_all_2").prop("checked", is_checked);
+          }
+       });//2
       
+      $(".normalCheck_3").click(function() {
+          var checked = $(this).is(":checked");
+          if (!checked) {
+             $("#check_all_3").prop('checked', false);
+          } else {
+             var is_checked = true;
+             $(".normalCheck_3").each(function() {
+                is_checked = is_checked && $(this).is(":checked");
+             });
+             $("#check_all_3").prop("checked", is_checked);
+          }
+       });//3
+      
+      $(".normalCheck_4").click(function() {
+          var checked = $(this).is(":checked");
+          if (!checked) {
+             $("#check_all_4").prop('checked', false);
+          } else {
+             var is_checked = true;
+             $(".normalCheck_4").each(function() {
+                is_checked = is_checked && $(this).is(":checked");
+             });
+             $("#check_all_4").prop("checked", is_checked);
+          }
+       });
+      
+     /* -----------------------------------단일선택 end------------------------------------- */
       // 곡명 버튼 눌렀을때 실행 
       // 플레이 리스트에 단일로 실행됨
       $("button[name=sname]").click(function() {
@@ -76,7 +144,7 @@ margin: 64px 449px -8px;
    // https://hianna.tistory.com/430 참고
    function getCheckboxValue()  {
       // 선택된 목록 가져오기
-      const query = 'input[name="snum"]:checked';
+      const query = 'input[name="snum"]:checked'; //snum_1  ,snumVal_1 로 바꾸고 해도 안되네;;
       const selectedEls = document.querySelectorAll(query);
    
       // 선택된 목록에서 value 찾기
@@ -112,7 +180,7 @@ margin: 64px 449px -8px;
 </head>
 <body>
 	<!-- 통합검색 -->
-	 <form id="totalsearch" name="musicSearch" align="center" >
+	 <form id="musicSearch" name="musicSearch" align="center" >
   <h1>통합검색결과</h1>
       <button type="button" onclick="getCheckboxValue()">플레이리스트</button>
       <div id='result'></div>
@@ -120,7 +188,7 @@ margin: 64px 449px -8px;
       <table style="width: 1200px;" border="1" >
          <tr align="center" height="2" bgcolor="#0b3f9a" >
             <td width="50">
-               <input type="checkbox" id="check_all" name="check_all">
+               <input type="checkbox" id="check_all_1" name="check_all_1">
             </td>
             <td width="40">번 호</td>
             <td>Image</td>
@@ -132,7 +200,7 @@ margin: 64px 449px -8px;
          <c:forEach var="row" items="${Banana}" varStatus="vs">
             <tr>
                <td align="center">
-                  <input type="checkbox" class="normalCheck" id="snum${row.snum}" name="snum" value="${row.snum}">
+                  <input type="checkbox" class="normalCheck_1" id="snum${row.snum}" name="snum" value="${row.snum}">
                </td>
                <td align="center">${vs.count}</td>
                <td>
@@ -166,7 +234,6 @@ margin: 64px 449px -8px;
 		<!-- "bpage?currPage=1" -->
 		<a href="mSearch${pageMaker.searchQuery(pageMaker.sPageNo-1)}">Prev</a>&nbsp;&nbsp;
 	</c:if>
-	
 	<!-- 2) sPage~ePage 까지 displayPageNo 값 만큼 출력, -->
 	<c:forEach var="i" begin="${pageMaker.sPageNo}" end="${pageMaker.ePageNo}">
 		<c:if test="${i==pageMaker.cri.currPage}">
@@ -186,9 +253,11 @@ margin: 64px 449px -8px;
 		<a href="mSearch${pageMaker.searchQuery(pageMaker.lastPageNo)}">Last</a>&nbsp;&nbsp;
 	</c:if>
 	</div>
+	<!-- -----------------------------------------------통합검색 end---------------------------------------------------------- -->
 
-<!-- 통합검색 -->
-	 <form id="totalsearch" name="musicSearch" align="center" >
+
+<!-- 곡검색 -->
+	 <form id="musicSearch" name="musicSearch" align="center" >
   <h1>곡 검색</h1>
       <button type="button" onclick="getCheckboxValue()">플레이리스트</button>
       <div id='result'></div>
@@ -196,7 +265,7 @@ margin: 64px 449px -8px;
       <table style="width: 1200px;" border="1" >
          <tr align="center" height="2" bgcolor="#0b3f9a" >
             <td width="50">
-               <input type="checkbox" id="check_all" name="check_all">
+               <input type="checkbox" id="check_all_2" name="check_all_2">
             </td>
             <td width="40">번 호</td>
             <td>Image</td>
@@ -205,10 +274,10 @@ margin: 64px 449px -8px;
             <td>앨범명</td>
             <td>downloadfile</td>
          </tr>
-         <c:forEach var="row" items="${Banana}" varStatus="vs">
+         <c:forEach var="row" items="${Apple}" varStatus="vs">
             <tr>
                <td align="center">
-                  <input type="checkbox" class="normalCheck" id="snum${row.snum}" name="snum" value="${row.snum}">
+                  <input type="checkbox" class="normalCheck_2" id="snum${row.snum}" name="snum" value="${row.snum}">
                </td>
                <td align="center">${vs.count}</td>
                <td>
@@ -262,9 +331,9 @@ margin: 64px 449px -8px;
 		<a href="mSearch${pageMaker.searchQuery(pageMaker.lastPageNo)}">Last</a>&nbsp;&nbsp;
 	</c:if>
 	</div>
-	
-	<!-- 통합검색 -->
-	 <form id="totalsearch" name="musicSearch" align="center" >
+	<!-- -----------------------------------------곡 검색 end--------------------------------------------------->
+	<!-- 아티스트명 검색 -->
+	 <form id="musicSearch" name="musicSearch" align="center" >
   <h1>아티스트명으로 검색</h1>
       <button type="button" onclick="getCheckboxValue()">플레이리스트</button>
       <div id='result'></div>
@@ -272,7 +341,7 @@ margin: 64px 449px -8px;
       <table style="width: 1200px;" border="1" >
          <tr align="center" height="2" bgcolor="#0b3f9a" >
             <td width="50">
-               <input type="checkbox" id="check_all" name="check_all">
+               <input type="checkbox" id="check_all_3" name="check_all_3">
             </td>
             <td width="40">번 호</td>
             <td>Image</td>
@@ -284,7 +353,7 @@ margin: 64px 449px -8px;
          <c:forEach var="row" items="${Banana}" varStatus="vs">
             <tr>
                <td align="center">
-                  <input type="checkbox" class="normalCheck" id="snum${row.snum}" name="snum" value="${row.snum}">
+                  <input type="checkbox" class="normalCheck_3" id="snum${row.snum}" name="snum" value="${row.snum}">
                </td>
                <td align="center">${vs.count}</td>
                <td>
@@ -338,9 +407,9 @@ margin: 64px 449px -8px;
 		<a href="mSearch${pageMaker.searchQuery(pageMaker.lastPageNo)}">Last</a>&nbsp;&nbsp;
 	</c:if>
 	</div>
-	
-	<!-- 통합검색 -->
-	 <form id="totalsearch" name="musicSearch" align="center" >
+	<!--------------------------------------------------아티스트 검색 end----------------------------------------------------- -->
+	<!-- 가사검색 -->
+	 <form id="musicSearch" name="musicSearch" align="center" >
   <h1>가사 검색</h1>
       <button type="button" onclick="getCheckboxValue()">플레이리스트</button>
       <div id='result'></div>
@@ -348,7 +417,7 @@ margin: 64px 449px -8px;
       <table style="width: 1200px;" border="1" >
          <tr align="center" height="2" bgcolor="#0b3f9a" >
             <td width="50">
-               <input type="checkbox" id="check_all" name="check_all">
+               <input type="checkbox" id="check_all_4" name="check_all_4">
             </td>
             <td width="40">번 호</td>
             <td>Image</td>
@@ -360,7 +429,7 @@ margin: 64px 449px -8px;
          <c:forEach var="row" items="${Banana}" varStatus="vs">
             <tr>
                <td align="center">
-                  <input type="checkbox" class="normalCheck" id="snum${row.snum}" name="snum" value="${row.snum}">
+                  <input type="checkbox" class="normalCheck_4" id="snum${row.snum}" name="snum" value="${row.snum}">
                </td>
                <td align="center">${vs.count}</td>
                <td>
@@ -414,8 +483,6 @@ margin: 64px 449px -8px;
 		<a href="mSearch${pageMaker.searchQuery(pageMaker.lastPageNo)}">Last</a>&nbsp;&nbsp;
 	</c:if>
 	</div>
-	
-	 
-   
+  <!--  -----------------------------------------------가사 검색 end--------------------------------------------------- -->
 </body>
 </html>

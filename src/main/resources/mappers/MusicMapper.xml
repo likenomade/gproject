@@ -59,61 +59,58 @@
   	
   	<otherwise>)</otherwise> 
   </choose>
-  
+</sql>
+<sql id="search2">
+  	<bind name="keyVal" value="'%'+keyword+'%'"/>
+  <choose>
+  	<when test="searchType=='snm/sgr/tt/ly/gne'.toString()">   
+  		and upper(sname) Like upper(#{keyVal}))
+  	</when>
+  	<otherwise>)</otherwise> 
+  </choose> 
 </sql>
 
-<select id="searchRowCount" resultType="int">
+<select id="searchRowCountM" resultType="int">
 <![CDATA[ 	
 	select count(*) from music where ( snum > 0 ]]>
 	<!-- 조건 id : search -->
 	<include refid="search"></include>
 </select>
 
- <select id="searchMList" resultType="vo.MusicVO">
+
+ <select id="searchMList" resultType="vo.MusicVO">  <!-- searchMList에서 M은통합 , N 곡이름..가운데본뜸 -->
+ <if test="searchType=='snm/sgr/tt/ly/gne'.toString()">
  <![CDATA[
  select snum,image,sname,singername,stitle,downloadfile,genre,rnum from
  (select m.* , ROW_NUMBER() OVER(order by snum desc) rnum from music m 
    where snum > 0 ]]>
   <include refid="search"></include>
   where rnum between #{sno} and #{eno}
+  
+</if>
 </select>
+
+ <select id="searchNList" resultType="vo.MusicVO">
+ <if test="searchType=='snm/sgr/tt/ly/gne'.toString()">
+ <![CDATA[
+ select snum,image,sname,singername,stitle,downloadfile,genre,rnum from
+ (select m.* , ROW_NUMBER() OVER(order by snum desc) rnum from music m 
+   where snum > 0 ]]>
+  <include refid="search2"></include>
+  where rnum between #{sno} and #{eno}
+</if>
+</select>
+
+
  
 <!-- PageList -->
-<select id="totalRowCount" resultType="int">
-	select count(*) from snum 
+<select id="totalRowCountM" resultType="int">
+	 select count(*) from snum 
 </select> 
 
-<select id="pageList" resultType="vo.MusicVO"> 
-<if test="keyword == null">
+<select id="pageMList" resultType="vo.MusicVO"> 
   select snum,image,sname,singername,stitle,downloadfile,genre,rnum  
   from music where rnum between #{sno} and #{eno}  <!-- //원래 이문장만 있었음 -->
-</if>
-<!-- 실험 page list 가 과연 다르게 나오는지 -->
-<choose>
-  	<when test="searchType=='snm'.toString()">
-  		 select sname,rnum  
- 		 from music where rnum between #{sno} and #{eno}
-  	</when>
-  	
-  	<when test="searchType=='sgr'.toString()">
-  		select singername,rnum  
- 		 from music where rnum between #{sno} and #{eno}
-  	</when>
-  	
-  	  	<when test="searchType=='ly'.toString()">
-  		select lyrics,rnum  
- 		 from music where rnum between #{sno} and #{eno}
-  	</when>
-  	
-  	<when test="searchType=='gne'.toString()">
-  		select genre,rnum  
- 		 from music where rnum between #{sno} and #{eno}
-  	</when>
-  	
-  	<otherwise>)</otherwise> 
-  </choose>
-
-
 </select>
 
 </mapper>  

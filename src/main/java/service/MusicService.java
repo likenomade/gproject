@@ -18,8 +18,9 @@ public interface MusicService {
 	public int searchRowCountM(Criteria cri) ;
 	public List<MusicVO> searchMList(Criteria cri) ;
 	// ** Criteria PageList
-	public int totalRowCount() ;
+	public int totalRowCountM() ;
 	public List<MusicVO> criMList(Criteria cri) ;
+	public List<MusicVO> searchNList(Criteria cri);
 	// ** PageList
 	public PageVO<MusicVO> pageMList(PageVO<MusicVO> vo);
 

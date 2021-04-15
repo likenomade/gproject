@@ -228,6 +228,25 @@ a {
 }
 /*footer---------------------------- */
 </style>
+<script type="text/javascript">
+$(function(){
+	
+	$('#searchBtn').on("click",function(){
+		alert($('#searchType').val());
+		alert($('#keyword').val());
+		self.location="mSearch"
+					+"?currPage=1"
+					+"&searchType="
+					+$('#searchType').val()
+					+"&keyword="
+					+$('#keyword').val();
+		// => ?currPage=7&rowPerPage=10&searchType=tc&keyword=java
+	}); //click
+});//ready
+
+</script>
+
+
 <c:if test="${message!=null}">
 	<script>
 		alert('${message}');
@@ -285,12 +304,11 @@ a {
 				<c:out value="${pageMaker.cri.searchType=='gne' ? 'selected' : ''}"/>>genre</option>
 				<option value="snm/sgr" 
 				<c:out value="${pageMaker.cri.searchType=='snm/sgr' ? 'selected' : ''}"/>>sname or singername</option>
-	
 		</select> 
-		
 		<input type="text" name="keyword" id="keyword" maxlength="35" size="50"
 		 style="vertical-align: middle;" value="${pageMaker.cri.keyword}">  
-		 <button id="searchBtn" style="vertical-align: middle;">Search</button>
+		 <button type="button"  id="searchBtn" style="vertical-align: middle;" >
+		 Search</button>    <!-- https://admm.tistory.com/54 참고-->
 			</form>
 		</div>
 		<hr>

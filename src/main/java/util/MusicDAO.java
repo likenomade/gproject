@@ -37,24 +37,35 @@ public class MusicDAO {
 	/*-------------검색부분 추가--------------*/
 	//SearchCriteria PageList
 		public int searchRowCountM(Criteria cri) {
-			return sqlSession.selectOne(NS+"searchRowCount");
+			return sqlSession.selectOne(NS+"searchRowCountM");
 		}  
 		public List<MusicVO> searchMList(Criteria cri) {
 			return sqlSession.selectList(NS+"searchMList",cri);
 		}
+		public List<MusicVO> searchNList(Criteria cri) {
+			System.out.println(cri.getKeyword());
+			return sqlSession.selectList(NS+"searchNList",cri);
+		}
+		
 
 		// ** Criteria PageList	
 		public List<MusicVO> criMList(Criteria cri) {
-			return sqlSession.selectList(NS+"pageList",cri);
+			return sqlSession.selectList(NS+"pageMList",cri);
 		}
-
+		public List<MusicVO> criNList(Criteria cri) {
+			return sqlSession.selectList(NS+"pageNList",cri);
+		}
+		
+		/*---------------------------------------------------*/
 		// ** Page BoardList
-		public int totalRowCount() {
-			return sqlSession.selectOne(NS+"totalRowCount");
+		public int totalRowCountM() {
+			return sqlSession.selectOne(NS+"totalRowCountM");
 		}  
 		public List<MusicVO> pageMList(PageVO<MusicVO> vo) {
-			return sqlSession.selectList(NS+"pageList",vo);
+			return sqlSession.selectList(NS+"pageMList",vo);
 		}
+
+	
 	
 
 

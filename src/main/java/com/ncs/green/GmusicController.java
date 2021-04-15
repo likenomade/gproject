@@ -31,10 +31,14 @@ public class GmusicController {
 	
 	@RequestMapping(value = "/mSearch")
 	public ModelAndView mSearch(ModelAndView mv, HttpServletRequest request,Criteria cri, PageMaker pageMaker) {
-
 		cri.setSnoEno();
 		
-		mv.addObject("Banana", service.searchMList(cri)); 
+		mv.addObject("Banana",service.searchMList(cri)); 
+		mv.addObject("Apple",service.searchNList(cri)); 
+		
+		
+    //여기서 어떤 조건을 주고 아래 Banana로 할껀지 Apple로 할껀지 정하자.
+	//	mv.addObject("Apple", service.searchNList(cri)); 
 
 		// 3) PageMaker 처리
 		pageMaker.setCri(cri);
@@ -68,7 +72,7 @@ public class GmusicController {
 		@RequestMapping(value = "/playlist")
 		public ModelAndView playlist(HttpServletRequest request, ModelAndView mv, HttpServletResponse response) {
 			// 파라미터로 값을 받음
-			String snumVal = request.getParameter("snumVal");
+			String snumVal = request.getParameter("snumVal_1");
 			request.getSession().setAttribute("snumValSession", snumVal);
 
 			MusicVO vo = new MusicVO();

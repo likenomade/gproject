@@ -19,79 +19,69 @@
 </update>
 
 <!-- 검색 및 페이징 부분 -->
-<sql id="search">
+<sql id="search1">
   <if test="keyword != null">
   	<bind name="keyVal" value="'%'+keyword+'%'"/>
   </if>	
    <choose>
-  	<when test="searchType=='snm'.toString()">
-  		and upper(sname) Like upper(#{keyVal}))
-  		<!-- and title Like  CONCAT('%',CONCAT(#{keyword},'%')) -->
-  	</when>
-  	<when test="searchType=='sgr'.toString()">
-  		and upper(singername) Like upper(#{keyVal}))
-  	</when>
-  	
-  	<when test="searchType=='tt'.toString()">
-  		and upper(stitle) Like upper(#{keyVal}))
-  	</when>
-  	
-  	  	<when test="searchType=='ly'.toString()">
-  		and upper(lyrics) Like upper(#{keyVal}))
-  	</when>
-  	
-  	<when test="searchType=='gne'.toString()">
-  		and genre Like #{keyVal} )
-  	</when>
-  	
-  	  	<when test="searchType=='snm/sgr'.toString()">
-  		and upper(sname) Like '%' || upper(#{keyword}) || '%' 
-  		or  upper(singername) Like '%' || upper(#{keyword}) || '%')
-  		</when>
-  	
-  	<when test="searchType=='snm/sgr/tt/ly/gne'.toString()">   
+  	<when test="searchType=='all'.toString()">   
   		and upper(sname) Like  '%' || upper(#{keyword}) || '%' 
   		or upper(singername) Like  '%' || upper(#{keyword}) || '%' 
   		or upper(stitle) Like  '%' || upper(#{keyword}) || '%' 
   		or lyrics Like  '%' || #{keyword} || '%' 
   		or  genre Like  '%' || #{keyword} || '%')
   	</when>
-  	
   	<otherwise>)</otherwise> 
   </choose>
 </sql>
+
+
 <sql id="search2">
   	<bind name="keyVal" value="'%'+keyword+'%'"/>
   <choose>
-  	<when test="searchType=='snm/sgr/tt/ly/gne'.toString()">   
+  	<when test="searchType=='all'.toString()">   
   		and upper(sname) Like upper(#{keyVal}))
   	</when>
   	<otherwise>)</otherwise> 
   </choose> 
 </sql>
 
-<select id="searchRowCountM" resultType="int">
-<![CDATA[ 	
-	select count(*) from music where ( snum > 0 ]]>
-	<!-- 조건 id : search -->
-	<include refid="search"></include>
-</select>
+<sql id="search3">
+  	<bind name="keyVal" value="'%'+keyword+'%'"/>
+  <choose>
+  	<when test="searchType=='all'.toString()">   
+  		and upper(singername) Like upper(#{keyVal}))
+  	</when>
+  	<otherwise>)</otherwise> 
+  </choose> 
+</sql>
+
+<sql id="search4">
+  	<bind name="keyVal" value="'%'+keyword+'%'"/>
+  <choose>
+  	<when test="searchType=='all'.toString()">   
+  		and upper(lyrics) Like upper(#{keyVal}))
+  	</when>
+  	<otherwise>)</otherwise> 
+  </choose> 
+</sql>
 
 
- <select id="searchMList" resultType="vo.MusicVO">  <!-- searchMList에서 M은통합 , N 곡이름..가운데본뜸 -->
- <if test="searchType=='snm/sgr/tt/ly/gne'.toString()">
+
+ <select id="searchAllList" resultType="vo.MusicVO">  <!-- searchMList에서 M은통합 , N 곡이름..가운데본뜸 -->
+ <if test="searchType=='all'.toString()">
  <![CDATA[
  select snum,image,sname,singername,stitle,downloadfile,genre,rnum from
  (select m.* , ROW_NUMBER() OVER(order by snum desc) rnum from music m 
    where snum > 0 ]]>
-  <include refid="search"></include>
+  <include refid="search1"></include>
   where rnum between #{sno} and #{eno}
   
 </if>
 </select>
 
- <select id="searchNList" resultType="vo.MusicVO">
- <if test="searchType=='snm/sgr/tt/ly/gne'.toString()">
+ <select id="searchSnameList" resultType="vo.MusicVO">
+ <if test="searchType=='all'.toString()">
  <![CDATA[
  select snum,image,sname,singername,stitle,downloadfile,genre,rnum from
  (select m.* , ROW_NUMBER() OVER(order by snum desc) rnum from music m 
@@ -102,15 +92,73 @@
 </select>
 
 
+ <select id="searchSingerNameList" resultType="vo.MusicVO">
+ <if test="searchType=='all'.toString()">
+ <![CDATA[
+ select snum,image,sname,singername,stitle,downloadfile,genre,rnum from
+ (select m.* , ROW_NUMBER() OVER(order by snum desc) rnum from music m 
+   where snum > 0 ]]>
+  <include refid="search3"></include>
+  where rnum between #{sno} and #{eno}
+</if>
+</select>
+
+ <select id="searchLyricsList" resultType="vo.MusicVO">
+ <if test="searchType=='all'.toString()">
+ <![CDATA[
+ select snum,image,sname,singername,stitle,downloadfile,genre,rnum from
+ (select m.* , ROW_NUMBER() OVER(order by snum desc) rnum from music m 
+   where snum > 0 ]]>
+  <include refid="search4"></include>
+  where rnum between #{sno} and #{eno}
+</if>
+</select>
+
  
+<select id="searchRowCountAll" resultType="int">
+<![CDATA[ 	
+	select count(*) from music where ( snum > 0 ]]>
+	<!-- 조건 id : search -->
+	<include refid="search1"></include>   <!-- 여기때문에 500난 것도 있엇음. -->
+</select>																<!-- 일단은 search1만됨 -->
+
+<select id="searchRowCountSname" resultType="int">
+<![CDATA[ 	
+	select count(*) from music where ( snum > 0 ]]>
+	<!-- 조건 id : search -->
+	<include refid="search2"></include>  
+</select>			
+
+<select id="searchRowCountSingerName" resultType="int">
+<![CDATA[ 	
+	select count(*) from music where ( snum > 0 ]]>
+	<!-- 조건 id : search -->
+	<include refid="search3"></include>  
+</select>	
+
+<select id="searchRowCountLyrics" resultType="int">
+<![CDATA[ 	
+	select count(*) from music where ( snum > 0 ]]>
+	<!-- 조건 id : search -->
+	<include refid="search4"></include>  
+</select>														
+
+
+
 <!-- PageList -->
-<select id="totalRowCountM" resultType="int">
+<select id="totalRowCountAll" resultType="int">
 	 select count(*) from snum 
 </select> 
+
+<select id="totalRowCountSname" resultType="int">
+	 select count(*) from snum 
+</select> 
+
 
 <select id="pageMList" resultType="vo.MusicVO"> 
   select snum,image,sname,singername,stitle,downloadfile,genre,rnum  
   from music where rnum between #{sno} and #{eno}  <!-- //원래 이문장만 있었음 -->
 </select>
+
 
 </mapper>  

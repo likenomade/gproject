@@ -11,6 +11,10 @@
 margin: 64px 449px -8px;
 }
 
+#noResult{
+text-align: left;
+}
+
 </style>
 <script>
    $(function() { //ready
@@ -120,9 +124,7 @@ margin: 64px 449px -8px;
       // 곡명 버튼 눌렀을때 실행 
       // 플레이 리스트에 단일로 실행됨
       $("button[name=sname]").click(function() {
-
          var buttonSnumVal = $(this).val();
-
          url = "playlist";
          window.open(url, "myview",
                      "toolbar=no,menubar=yes,scrollbars=no,resizable=no,width=700,height=800");
@@ -181,7 +183,7 @@ margin: 64px 449px -8px;
 <body>
 	<!-- 통합검색 -->
 	 <form id="musicSearch" name="musicSearch" align="center" >
-  <h1>통합검색결과</h1>
+ <%--  <h1>통합검색결과</h1>
       <button type="button" onclick="getCheckboxValue()">플레이리스트</button>
       <div id='result'></div>
       <input type="hidden" id="snumVal" name="snumVal" value="">
@@ -197,7 +199,7 @@ margin: 64px 449px -8px;
             <td>앨범명</td>
             <td>downloadfile</td>
          </tr>
-         <c:forEach var="row" items="${Banana}" varStatus="vs">
+         <c:forEach var="row" items="${Apple}" varStatus="vs">
             <tr>
                <td align="center">
                   <input type="checkbox" class="normalCheck_1" id="snum${row.snum}" name="snum" value="${row.snum}">
@@ -215,9 +217,11 @@ margin: 64px 449px -8px;
                   <a href="dnload?dnfile=${row.downloadfile}">${row.downloadfile}</a>
                </td>
             </tr>
-         </c:forEach>
+            </c:forEach>
       </table>
-   </form>
+             <c:if test="${empty Apple}"> 
+				<h2>통합 검색한 결과가 없습니다.</h2>
+      	   </c:if> 
    
    	<!-- ------------------페이징---------------------------->
 	<!--** Page Criteria 추가   
@@ -252,12 +256,10 @@ margin: 64px 449px -8px;
 		<a href="mSearch${pageMaker.searchQuery(pageMaker.ePageNo+1)}">&nbsp;&nbsp;Next</a>&nbsp;  
 		<a href="mSearch${pageMaker.searchQuery(pageMaker.lastPageNo)}">Last</a>&nbsp;&nbsp;
 	</c:if>
-	</div>
+	</div> --%>
 	<!-- -----------------------------------------------통합검색 end---------------------------------------------------------- -->
 
-
 <!-- 곡검색 -->
-	 <form id="musicSearch" name="musicSearch" align="center" >
   <h1>곡 검색</h1>
       <button type="button" onclick="getCheckboxValue()">플레이리스트</button>
       <div id='result'></div>
@@ -274,7 +276,7 @@ margin: 64px 449px -8px;
             <td>앨범명</td>
             <td>downloadfile</td>
          </tr>
-         <c:forEach var="row" items="${Apple}" varStatus="vs">
+         <c:forEach var="row" items="${Banana}" varStatus="vs">
             <tr>
                <td align="center">
                   <input type="checkbox" class="normalCheck_2" id="snum${row.snum}" name="snum" value="${row.snum}">
@@ -294,7 +296,9 @@ margin: 64px 449px -8px;
             </tr>
          </c:forEach>
       </table>
-   </form>
+         <c:if test="${empty Banana}"> 
+				<h2>곡 검색한 결과가 없습니다.</h2>
+      	   </c:if> 
    
    	<!-- ------------------페이징---------------------------->
 	<!--** Page Criteria 추가   
@@ -306,19 +310,20 @@ margin: 64px 449px -8px;
 	<!-- ** ver01 : pageMaker.makeQuery(?) -->
 	<!-- ** ver02 : pageMaker.searchQuery(?)  -->
 	<!-- 1) First << ,  Prev < : enabled 여부 -->
-	<c:if test="${pageMaker.prev && pageMaker.sPageNo>1 }">
-		<a href="mSearch${pageMaker.searchQuery(1)}">First</a>&nbsp;  
+	
+	<c:if test="${pageMaker2.prev && pageMaker2.sPageNo>1 }">
+		<a href="mSearch${pageMaker2.searchQuery(1)}">First</a>&nbsp;  
 		<!-- "bpage?currPage=1" -->
-		<a href="mSearch${pageMaker.searchQuery(pageMaker.sPageNo-1)}">Prev</a>&nbsp;&nbsp;
+		<a href="mSearch${pageMaker2.searchQuery(pageMaker2.sPageNo-1)}">Prev</a>&nbsp;&nbsp;
 	</c:if>
 	
 	<!-- 2) sPage~ePage 까지 displayPageNo 값 만큼 출력, -->
-	<c:forEach var="i" begin="${pageMaker.sPageNo}" end="${pageMaker.ePageNo}">
-		<c:if test="${i==pageMaker.cri.currPage}">
+	<c:forEach var="i" begin="${pageMaker2.sPageNo}" end="${pageMaker2.ePageNo}">
+		<c:if test="${i==pageMaker2.cri.currPage}">
 			<font size="5" color="Orange">${i}&nbsp;</font>
 		</c:if>
-		<c:if test="${i!=pageMaker.cri.currPage}">
-			<a href="mSearch${pageMaker.searchQuery(i)}">${i}</a>&nbsp;
+		<c:if test="${i!=pageMaker2.cri.currPage}">
+			<a href="mSearch${pageMaker2.searchQuery(i)}">${i}</a>&nbsp;
 		</c:if>
 		<!-- 삼항식과 비교  
 		<c:out value="${i==pageMaker.cri.currPage ? 'class=active' : '' }"/>
@@ -326,14 +331,13 @@ margin: 64px 449px -8px;
 	</c:forEach>
 		
 	<!-- 3) Next >  ,   Last >> : enabled 여부	 -->
-	<c:if test="${pageMaker.next && pageMaker.ePageNo>0}">
-		<a href="mSearch${pageMaker.searchQuery(pageMaker.ePageNo+1)}">&nbsp;&nbsp;Next</a>&nbsp;  
-		<a href="mSearch${pageMaker.searchQuery(pageMaker.lastPageNo)}">Last</a>&nbsp;&nbsp;
+	<c:if test="${pageMaker2.next && pageMaker2.ePageNo>0}">
+		<a href="mSearch${pageMaker2.searchQuery(pageMaker2.ePageNo+1)}">&nbsp;&nbsp;Next</a>&nbsp;  
+		<a href="mSearch${pageMaker2.searchQuery(pageMaker2.lastPageNo)}">Last</a>&nbsp;&nbsp;
 	</c:if>
 	</div>
 	<!-- -----------------------------------------곡 검색 end--------------------------------------------------->
 	<!-- 아티스트명 검색 -->
-	 <form id="musicSearch" name="musicSearch" align="center" >
   <h1>아티스트명으로 검색</h1>
       <button type="button" onclick="getCheckboxValue()">플레이리스트</button>
       <div id='result'></div>
@@ -350,7 +354,7 @@ margin: 64px 449px -8px;
             <td>앨범명</td>
             <td>downloadfile</td>
          </tr>
-         <c:forEach var="row" items="${Banana}" varStatus="vs">
+         <c:forEach var="row" items="${Carot}" varStatus="vs">
             <tr>
                <td align="center">
                   <input type="checkbox" class="normalCheck_3" id="snum${row.snum}" name="snum" value="${row.snum}">
@@ -370,7 +374,9 @@ margin: 64px 449px -8px;
             </tr>
          </c:forEach>
       </table>
-   </form>
+      <c:if test="${empty Carot}"> 
+				<h2>아티스트로 검색한 결과가 없습니다.</h2>
+      </c:if> 
    
    	<!-- ------------------페이징---------------------------->
 	<!--** Page Criteria 추가   
@@ -409,7 +415,6 @@ margin: 64px 449px -8px;
 	</div>
 	<!--------------------------------------------------아티스트 검색 end----------------------------------------------------- -->
 	<!-- 가사검색 -->
-	 <form id="musicSearch" name="musicSearch" align="center" >
   <h1>가사 검색</h1>
       <button type="button" onclick="getCheckboxValue()">플레이리스트</button>
       <div id='result'></div>
@@ -426,7 +431,7 @@ margin: 64px 449px -8px;
             <td>앨범명</td>
             <td>downloadfile</td>
          </tr>
-         <c:forEach var="row" items="${Banana}" varStatus="vs">
+         <c:forEach var="row" items="${Durian}" varStatus="vs">
             <tr>
                <td align="center">
                   <input type="checkbox" class="normalCheck_4" id="snum${row.snum}" name="snum" value="${row.snum}">
@@ -446,8 +451,9 @@ margin: 64px 449px -8px;
             </tr>
          </c:forEach>
       </table>
-   </form>
-   
+       <c:if test="${empty Durian}" > 
+				<h2>가사로 검색한 결과가 없습니다.</h2>
+      </c:if> 
    	<!-- ------------------페이징---------------------------->
 	<!--** Page Criteria 추가   
     1) First << ,  Prev < : enabled 여부
@@ -458,19 +464,19 @@ margin: 64px 449px -8px;
 	<!-- ** ver01 : pageMaker.makeQuery(?) -->
 	<!-- ** ver02 : pageMaker.searchQuery(?)  -->
 	<!-- 1) First << ,  Prev < : enabled 여부 -->
-	<c:if test="${pageMaker.prev && pageMaker.sPageNo>1 }">
-		<a href="mSearch${pageMaker.searchQuery(1)}">First</a>&nbsp;  
+	<c:if test="${pageMaker4.prev && pageMaker4.sPageNo>1 }">
+		<a href="mSearch${pageMaker4.searchQuery(1)}">First</a>&nbsp;  
 		<!-- "bpage?currPage=1" -->
-		<a href="mSearch${pageMaker.searchQuery(pageMaker.sPageNo-1)}">Prev</a>&nbsp;&nbsp;
+		<a href="mSearch${pageMaker4.searchQuery(pageMaker4.sPageNo-1)}">Prev</a>&nbsp;&nbsp;
 	</c:if>
 	
 	<!-- 2) sPage~ePage 까지 displayPageNo 값 만큼 출력, -->
-	<c:forEach var="i" begin="${pageMaker.sPageNo}" end="${pageMaker.ePageNo}">
-		<c:if test="${i==pageMaker.cri.currPage}">
+	<c:forEach var="i" begin="${pageMaker4.sPageNo}" end="${pageMaker4.ePageNo}">
+		<c:if test="${i==pageMaker4.cri.currPage}">
 			<font size="5" color="Orange">${i}&nbsp;</font>
 		</c:if>
-		<c:if test="${i!=pageMaker.cri.currPage}">
-			<a href="mSearch${pageMaker.searchQuery(i)}">${i}</a>&nbsp;
+		<c:if test="${i!=pageMaker4.cri.currPage}">
+			<a href="mSearch${pageMaker4.searchQuery(i)}">${i}</a>&nbsp;
 		</c:if>
 		<!-- 삼항식과 비교  
 		<c:out value="${i==pageMaker.cri.currPage ? 'class=active' : '' }"/>
@@ -478,11 +484,12 @@ margin: 64px 449px -8px;
 	</c:forEach>
 		
 	<!-- 3) Next >  ,   Last >> : enabled 여부	 -->
-	<c:if test="${pageMaker.next && pageMaker.ePageNo>0}">
-		<a href="mSearch${pageMaker.searchQuery(pageMaker.ePageNo+1)}">&nbsp;&nbsp;Next</a>&nbsp;  
-		<a href="mSearch${pageMaker.searchQuery(pageMaker.lastPageNo)}">Last</a>&nbsp;&nbsp;
+	<c:if test="${pageMaker4.next && pageMaker4.ePageNo>0}">
+		<a href="mSearch${pageMaker4.searchQuery(pageMaker4.ePageNo+1)}">&nbsp;&nbsp;Next</a>&nbsp;  
+		<a href="mSearch${pageMaker4.searchQuery(pageMaker4.lastPageNo)}">Last</a>&nbsp;&nbsp;
 	</c:if>
 	</div>
+	</form>
   <!--  -----------------------------------------------가사 검색 end--------------------------------------------------- -->
 </body>
 </html>

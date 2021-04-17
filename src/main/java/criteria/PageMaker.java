@@ -17,7 +17,7 @@ private int lastPageNo;
 // 출력 가능한 마지막 PageNo (totalRow, rowPerPage 로 계산)
 
 //private Criteria cri; //ver01
-public Criteria cri; //ver02  -> 이거 private였는데 쓸려고 public으로 바꿔줌
+private Criteria cri; //ver02  -> 이거 private였는데 쓸려고 public으로 바꿔줌
 
 // 1) 필요한 값 set 
 //public void setCri(Criteria cri) { //ver01
@@ -121,6 +121,23 @@ public String toString() {
 	return "PageMaker [totalRow=" + totalRow + ", sPageNo=" + sPageNo + ", ePageNo=" + ePageNo + ", prev=" + prev
 			+ ", next=" + next + ", displayPageNo=" + displayPageNo + ", lastPageNo=" + lastPageNo + ", cri=" + cri
 			+ "]";
+}
+
+public void setTotalRowAll(int totalRow) {
+	   this.totalRow=totalRow;
+	   calcData();
+}
+public void setTotalRowSname(int totalRow) {
+	   this.totalRow=totalRow;
+	   calcData();
+}
+public void setTotalRowSingerName(int totalRow) {
+	   this.totalRow=totalRow;
+	   calcData();
+}
+public void setTotalRowLyrics(int totalRow) {
+	   this.totalRow=totalRow;
+	   calcData();
 }
 
 

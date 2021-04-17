@@ -235,7 +235,8 @@ $(function(){
 		alert($('#searchType').val());
 		alert($('#keyword').val());
 		self.location="mSearch"
-					+"?currPage=1"
+					 +"?currPage=1" 
+					/* +"${pageMaker.makeQuery(1)}" */
 					+"&searchType="
 					+$('#searchType').val()
 					+"&keyword="
@@ -290,25 +291,14 @@ $(function(){
 			<form action="mSearch" id="search" name="search" class="search">
 			
 			<select name="searchType" id="searchType">
-						<option value="snm/sgr/tt/ly/gne"
+						<option value="all"
 				<c:out value="${pageMaker.cri.searchType=='snm/sgr/tt/ly/gne' ? 'selected' : ''}" />>All</option>
-				<option value="snm"  
-					<c:out value="${pageMaker.cri.searchType=='snm'? 'selected' : ''}"/>>sname</option>
-						<option value="sgr" 
-					<c:out value="${pageMaker.cri.searchType=='sgr' ? 'selected' : ''}"/>>singername</option>
-						<option value="tt" 
-					<c:out value="${pageMaker.cri.searchType=='tt' ? 'selected' : ''}"/>>stitle</option>
-				<option value="ly" 
-				<c:out value="${pageMaker.cri.searchType=='ly' ? 'selected' : ''}"/>>lyrics</option>
-				<option value="gne" 
-				<c:out value="${pageMaker.cri.searchType=='gne' ? 'selected' : ''}"/>>genre</option>
-				<option value="snm/sgr" 
-				<c:out value="${pageMaker.cri.searchType=='snm/sgr' ? 'selected' : ''}"/>>sname or singername</option>
 		</select> 
 		<input type="text" name="keyword" id="keyword" maxlength="35" size="50"
-		 style="vertical-align: middle;" value="${pageMaker.cri.keyword}">  
+		 style="vertical-align: middle;" value="${pageMaker.cri.keyword}"   value2="${pageMaker2.cri.keyword}"
+		 value3="${pageMaker3.cri.keyword}" value4="${pageMaker4.cri.keyword}" >  
 		 <button type="button"  id="searchBtn" style="vertical-align: middle;" >
-		 Search</button>    <!-- https://admm.tistory.com/54 참고-->
+		 Search</button>    
 			</form>
 		</div>
 		<hr>

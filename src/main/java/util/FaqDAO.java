@@ -21,14 +21,14 @@ public class FaqDAO {
 
 	//SearchCriteria PageList
 	public int searchRowCountF(Criteria cri) {
-		return sqlSession.selectOne(NS+"searchRowCount");
+		return sqlSession.selectOne(NS+"searchRowCountF",cri);
 	}  
 	public List<FaqVO> searchFList(Criteria cri) {
 		return sqlSession.selectList(NS+"searchFList",cri);
 	}
 
 	// ** Criteria PageList	
-	public List<FaqVO> criBList(Criteria cri) {
+	public List<FaqVO> criFList(Criteria cri) {
 		return sqlSession.selectList(NS+"pageList",cri);
 	}
 

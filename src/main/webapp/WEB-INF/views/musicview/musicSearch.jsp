@@ -6,15 +6,154 @@
 <meta charset="UTF-8">
 <title>검색음악</title>
 <script src="resources/myLib/jquery-3.2.1.min.js"></script>
+<link rel="preconnect" href="https://fonts.gstatic.com">
+<link href="https://fonts.googleapis.com/css2?family=Cute+Font&display=swap" rel="stylesheet">
+<script src="resources/myLib/footer.js"></script>
+<link rel="preconnect" href="https://fonts.gstatic.com">
+<link href="https://fonts.googleapis.com/css2?family=Cute+Font&display=swap" rel="stylesheet">
 <style>
-#musicSearch{
-margin: 64px 449px -8px;
+#logo {
+   font-size: 20;
+   color: #0b3f9a;
+   font-family: 'Chela One', cursive;
 }
 
-#noResult{
-text-align: left;
+#searchBtn {
+   margin-bottom: 3px;
 }
 
+#logofont {
+   font-family: 'Chela One', cursive;
+}
+
+#searchdiv {
+   height: 80px;
+   padding: 22px 262px 10px 262px;
+   /* height: 50px; */
+}
+
+#musicSearch {
+   margin: 64px 262px -8px;
+}
+
+#totalSearch {
+   text-align: right;
+}
+
+h1 {
+   color: #0b3f9a;
+}
+
+a {
+   color: black;
+   text-decoration: none;
+}
+
+header {
+   background-color: black;
+   height: 40px;
+   margin: 0 auto;
+   width: 75%;
+}
+
+#headermenu {
+   float: right;
+   list-style: none;
+   margin: 8px 8px 8px;
+}
+
+#headermenu>li {
+   display: inline;
+}
+/* nav */
+nav {
+   background-color: ghostwhite;
+   border-bottom-width: 3px;
+   border-bottom-color: navy;
+   border-bottom-style: solid;
+   margin: 0 auto;
+   width: 75%;
+   height: 70px;
+   padding-top: 1px;
+}
+/* body */
+body {
+   margin: 0;
+}
+
+section {
+   margin: 0 auto;
+   width: 75%;
+   height: 100%;
+   padding-top: 20px;
+}
+/* topmenu(nav) */
+nav ul {
+   list-style: none;
+}
+
+nav ul ul {
+   display: none;
+}
+
+nav ul li a:hover {
+   color: #0b3f9a;
+}
+
+nav ul li:hover ul {
+   display: table-row-group;
+   background-color: ghostwhite;
+}
+
+nav>ul>li {
+   float: left;
+   margin-left: 30px;
+}
+
+nav ul a {
+   line-height: 30px;
+   text-decoration: none;
+   font-size: 20px;
+   font-weight: bold;
+   color: gray;
+   padding: 5px;
+}
+
+footer {
+   border-top-style: solid;
+   border-top-color: navy;
+   border-top-width: 1px;
+}
+/*footer---------------------------- */
+footer {
+   height: 100px;
+   margin: 0 auto; /* 중앙정렬 */
+   width: 75%;
+}
+
+#footerinfo {
+   text-align: center;
+   padding-top: 15px;
+   margin-bottom: 10px;
+   font-size: 20px;
+   font-family: "Cute Font", sans-serif;
+}
+
+#footerlist {
+   text-align: center;
+   padding-bottom: 10px;
+   font-family: "Cute Font", sans-serif;
+   font-size: 15px;
+   padding-bottom: 10px;
+}
+
+#footerbar {
+   font-size: 5px;
+}
+/*footer---------------------------- */
+/* 반응형 미디어 쿼리 */
+@media ( max-width :650px) {
+}
 </style>
 <script>
    $(function() { //ready
@@ -178,94 +317,89 @@ text-align: left;
    }
 </script>
 
+<script type="text/javascript">
+$(function(){
+   $('#searchBtn').on("click",function(){
+      self.location="mSearch"
+                +"?currPage=1" 
+               /* +"${pageMaker.makeQuery(1)}" */
+               +"&searchType="
+               +$('#searchType').val()
+               +"&keyword="
+               +$('#keyword').val();
+      // => ?currPage=7&rowPerPage=10&searchType=tc&keyword=java
+   }); //click
+});//ready
+
+</script>
+
+
 
 </head>
 <body>
-	<!-- 통합검색 -->
-	 <form id="musicSearch" name="musicSearch" align="center" >
- <%--  <h1>통합검색결과</h1>
-      <button type="button" onclick="getCheckboxValue()">플레이리스트</button>
-      <div id='result'></div>
-      <input type="hidden" id="snumVal" name="snumVal" value="">
-      <table style="width: 1200px;" border="1" >
-         <tr align="center" height="2" bgcolor="#0b3f9a" >
-            <td width="50">
-               <input type="checkbox" id="check_all_1" name="check_all_1">
-            </td>
-            <td width="40">번 호</td>
-            <td>Image</td>
-            <td>곡 명</td>
-            <td>가 수</td>
-            <td>앨범명</td>
-            <td>downloadfile</td>
-         </tr>
-         <c:forEach var="row" items="${Apple}" varStatus="vs">
-            <tr>
-               <td align="center">
-                  <input type="checkbox" class="normalCheck_1" id="snum${row.snum}" name="snum" value="${row.snum}">
-               </td>
-               <td align="center">${vs.count}</td>
-               <td>
-                  <img src="${row.image}" width="70" height="70">
-               </td>
-               <td>
-                  <button type="button" name="sname" value="${row.snum}">${row.sname}</button>
-               </td>
-               <td>${row.singername}</td>
-               <td>${row.stitle}</td>
-               <td>
-                  <a href="dnload?dnfile=${row.downloadfile}">${row.downloadfile}</a>
-               </td>
-            </tr>
-            </c:forEach>
-      </table>
-             <c:if test="${empty Apple}"> 
-				<h2>통합 검색한 결과가 없습니다.</h2>
-      	   </c:if> 
-   
-   	<!-- ------------------페이징---------------------------->
-	<!--** Page Criteria 추가   
-    1) First << ,  Prev < : enabled 여부
-    2) sPage~ePage 까지 displayPageNo 값 만큼 출력, 
-    3) Next >  ,   Last >> : enabled 여부
-	-->
-<div  align="center"style="font-size: 20px; ">
-	<!-- ** ver01 : pageMaker.makeQuery(?) -->
-	<!-- ** ver02 : pageMaker.searchQuery(?)  -->
-	<!-- 1) First << ,  Prev < : enabled 여부 -->
-	<c:if test="${pageMaker.prev && pageMaker.sPageNo>1 }">
-		<a href="mSearch${pageMaker.searchQuery(1)}">First</a>&nbsp;  
-		<!-- "bpage?currPage=1" -->
-		<a href="mSearch${pageMaker.searchQuery(pageMaker.sPageNo-1)}">Prev</a>&nbsp;&nbsp;
-	</c:if>
-	<!-- 2) sPage~ePage 까지 displayPageNo 값 만큼 출력, -->
-	<c:forEach var="i" begin="${pageMaker.sPageNo}" end="${pageMaker.ePageNo}">
-		<c:if test="${i==pageMaker.cri.currPage}">
-			<font size="5" color="Orange">${i}&nbsp;</font>
-		</c:if>
-		<c:if test="${i!=pageMaker.cri.currPage}">
-			<a href="mSearch${pageMaker.searchQuery(i)}">${i}</a>&nbsp;
-		</c:if>
-		<!-- 삼항식과 비교  
-		<c:out value="${i==pageMaker.cri.currPage ? 'class=active' : '' }"/>
-		-->
-	</c:forEach>
-		
-	<!-- 3) Next >  ,   Last >> : enabled 여부	 -->
-	<c:if test="${pageMaker.next && pageMaker.ePageNo>0}">
-		<a href="mSearch${pageMaker.searchQuery(pageMaker.ePageNo+1)}">&nbsp;&nbsp;Next</a>&nbsp;  
-		<a href="mSearch${pageMaker.searchQuery(pageMaker.lastPageNo)}">Last</a>&nbsp;&nbsp;
-	</c:if>
-	</div> --%>
-	<!-- -----------------------------------------------통합검색 end---------------------------------------------------------- -->
 
-<!-- 곡검색 -->
-  <h1>곡 검색</h1>
+   <header>
+      <a href="home">
+         <img src="resources/uploadImage/gm.png" width="40px" height="40px">
+      </a>
+      <ul id="headermenu">
+         <!-- 조건주고 로그인 상태면 로그인 없애고 로그아웃으로 -->
+         <!-- <li>로그아웃</li> -->
+         <li><button>
+               <a href="javascript:;">이용권구매</a>
+            </button></li>
+         <c:if test="${loginID == null}">
+            <li><button>
+                  <a href="memberloginpage?jcode=Q">로그인</a>
+               </button></li>
+            <li><button>
+                  <a href="checkterm?jcode=Q">회원가입</a>
+               </button></li>
+         </c:if>
+         <c:if test="${loginID != null}">
+            <li><button>
+                  <a href="mlogout?jcode=Q">로그아웃</a>
+               </button></li>
+            <li><button id="mypage">
+                  <a href="mypage?id=${loginID}"> 마이페이지</a>
+               </button></li>
+         </c:if>
+      </ul>
+   </header>
+   <nav>
+      <ul>
+         <li><a href="home">메인 페이지</a>
+         <li><a href="javascript:;" onClick="location.reload()" style="color: #0b3f9a; font-size: 25px;">통합 검색</a>
+         <li ><a href="searchSname?${pageMaker.cri.keyword}">곡 검색</a>
+         <li><a href="searchSingerName?${pageMaker.cri.keyword}">아티스트 검색</a>
+         <li><a href="searchLyrics?${pageMaker.cri.keyword}">가사 검색</a>
+      </ul>
+   </nav>
+   <br>
+
+   <div id="searchdiv">
+      <div id="logo">
+         <h1>GMUSIC</h1>
+         <form action="mSearch" id="search" name="search" class="search">
+
+            <select name="searchType" id="searchType" style="display: none">
+               <option value="all" <c:out value="${pageMaker.cri.searchType=='snm/sgr/tt/ly/gne' ? 'selected' : ''}" />>All</option>
+            </select>
+            <input type="text" name="keyword" id="keyword" maxlength="35" size="50" style="vertical-align: middle;" value="${pageMaker.cri.keyword}">
+            <button type="button" id="searchBtn" style="vertical-align: middle;">Search</button>
+         </form>
+      </div>
+   </div>
+
+   <form id="musicSearch" name="musicSearch" align="center">
+      <h3 align="left">'${pageMaker.cri.keyword}'에 대한 검색 결과입니다.</h3>
+
+      <!-- 곡검색 -->
+      <h1>곡 검색 결과 (${Banana2})</h1>
       <button type="button" onclick="getCheckboxValue()">플레이리스트</button>
-      <div id='result'></div>
       <input type="hidden" id="snumVal" name="snumVal" value="">
-      <table style="width: 1200px;" border="1" >
-         <tr align="center" height="2" bgcolor="#0b3f9a" >
+      <table style="width: 100%;" border="1">
+         <tr align="center" height="2" bgcolor="ghostwhite">
             <td width="50">
                <input type="checkbox" id="check_all_2" name="check_all_2">
             </td>
@@ -296,54 +430,20 @@ text-align: left;
             </tr>
          </c:forEach>
       </table>
-         <c:if test="${empty Banana}"> 
-				<h2>곡 검색한 결과가 없습니다.</h2>
-      	   </c:if> 
-   
-   	<!-- ------------------페이징---------------------------->
-	<!--** Page Criteria 추가   
-    1) First << ,  Prev < : enabled 여부
-    2) sPage~ePage 까지 displayPageNo 값 만큼 출력, 
-    3) Next >  ,   Last >> : enabled 여부
-	-->
-<div  align="center"style="font-size: 20px; ">
-	<!-- ** ver01 : pageMaker.makeQuery(?) -->
-	<!-- ** ver02 : pageMaker.searchQuery(?)  -->
-	<!-- 1) First << ,  Prev < : enabled 여부 -->
-	
-	<c:if test="${pageMaker2.prev && pageMaker2.sPageNo>1 }">
-		<a href="mSearch${pageMaker2.searchQuery(1)}">First</a>&nbsp;  
-		<!-- "bpage?currPage=1" -->
-		<a href="mSearch${pageMaker2.searchQuery(pageMaker2.sPageNo-1)}">Prev</a>&nbsp;&nbsp;
-	</c:if>
-	
-	<!-- 2) sPage~ePage 까지 displayPageNo 값 만큼 출력, -->
-	<c:forEach var="i" begin="${pageMaker2.sPageNo}" end="${pageMaker2.ePageNo}">
-		<c:if test="${i==pageMaker2.cri.currPage}">
-			<font size="5" color="Orange">${i}&nbsp;</font>
-		</c:if>
-		<c:if test="${i!=pageMaker2.cri.currPage}">
-			<a href="mSearch${pageMaker2.searchQuery(i)}">${i}</a>&nbsp;
-		</c:if>
-		<!-- 삼항식과 비교  
-		<c:out value="${i==pageMaker.cri.currPage ? 'class=active' : '' }"/>
-		-->
-	</c:forEach>
-		
-	<!-- 3) Next >  ,   Last >> : enabled 여부	 -->
-	<c:if test="${pageMaker2.next && pageMaker2.ePageNo>0}">
-		<a href="mSearch${pageMaker2.searchQuery(pageMaker2.ePageNo+1)}">&nbsp;&nbsp;Next</a>&nbsp;  
-		<a href="mSearch${pageMaker2.searchQuery(pageMaker2.lastPageNo)}">Last</a>&nbsp;&nbsp;
-	</c:if>
-	</div>
-	<!-- -----------------------------------------곡 검색 end--------------------------------------------------->
-	<!-- 아티스트명 검색 -->
-  <h1>아티스트명으로 검색</h1>
+      <c:if test="${empty Banana}">
+         <h2>곡 검색한 결과가 없습니다.</h2>
+      </c:if>
+      <div id="totalSearch">
+         <a href="searchsname">곡명으로 검색 전체보기></a>
+      </div>
+
+      <!-- 아티스트명 검색 -->
+      <h1>아티스트명으로 검색 결과 (${Carot2})</h1>
       <button type="button" onclick="getCheckboxValue()">플레이리스트</button>
       <div id='result'></div>
       <input type="hidden" id="snumVal" name="snumVal" value="">
-      <table style="width: 1200px;" border="1" >
-         <tr align="center" height="2" bgcolor="#0b3f9a" >
+      <table style="width: 100%;" border="1">
+         <tr align="center" height="2" bgcolor="ghostwhite">
             <td width="50">
                <input type="checkbox" id="check_all_3" name="check_all_3">
             </td>
@@ -374,53 +474,20 @@ text-align: left;
             </tr>
          </c:forEach>
       </table>
-      <c:if test="${empty Carot}"> 
-				<h2>아티스트로 검색한 결과가 없습니다.</h2>
-      </c:if> 
-   
-   	<!-- ------------------페이징---------------------------->
-	<!--** Page Criteria 추가   
-    1) First << ,  Prev < : enabled 여부
-    2) sPage~ePage 까지 displayPageNo 값 만큼 출력, 
-    3) Next >  ,   Last >> : enabled 여부
-	-->
-<div  align="center"style="font-size: 20px; ">
-	<!-- ** ver01 : pageMaker.makeQuery(?) -->
-	<!-- ** ver02 : pageMaker.searchQuery(?)  -->
-	<!-- 1) First << ,  Prev < : enabled 여부 -->
-	<c:if test="${pageMaker.prev && pageMaker.sPageNo>1 }">
-		<a href="mSearch${pageMaker.searchQuery(1)}">First</a>&nbsp;  
-		<!-- "bpage?currPage=1" -->
-		<a href="mSearch${pageMaker.searchQuery(pageMaker.sPageNo-1)}">Prev</a>&nbsp;&nbsp;
-	</c:if>
-	
-	<!-- 2) sPage~ePage 까지 displayPageNo 값 만큼 출력, -->
-	<c:forEach var="i" begin="${pageMaker.sPageNo}" end="${pageMaker.ePageNo}">
-		<c:if test="${i==pageMaker.cri.currPage}">
-			<font size="5" color="Orange">${i}&nbsp;</font>
-		</c:if>
-		<c:if test="${i!=pageMaker.cri.currPage}">
-			<a href="mSearch${pageMaker.searchQuery(i)}">${i}</a>&nbsp;
-		</c:if>
-		<!-- 삼항식과 비교  
-		<c:out value="${i==pageMaker.cri.currPage ? 'class=active' : '' }"/>
-		-->
-	</c:forEach>
-		
-	<!-- 3) Next >  ,   Last >> : enabled 여부	 -->
-	<c:if test="${pageMaker.next && pageMaker.ePageNo>0}">
-		<a href="mSearch${pageMaker.searchQuery(pageMaker.ePageNo+1)}">&nbsp;&nbsp;Next</a>&nbsp;  
-		<a href="mSearch${pageMaker.searchQuery(pageMaker.lastPageNo)}">Last</a>&nbsp;&nbsp;
-	</c:if>
-	</div>
-	<!--------------------------------------------------아티스트 검색 end----------------------------------------------------- -->
-	<!-- 가사검색 -->
-  <h1>가사 검색</h1>
+      <c:if test="${empty Carot}">
+         <h2>아티스트로 검색한 결과가 없습니다.</h2>
+      </c:if>
+      <div id="totalSearch">
+         <a href="searchSingerName">아트스트명으로 검색 전체보기></a>
+      </div>
+      <!--------------------------------------------------아티스트 검색 end----------------------------------------------------- -->
+      <!-- 가사검색 -->
+      <h1>가사 검색 결과 (${Durian2})</h1>
       <button type="button" onclick="getCheckboxValue()">플레이리스트</button>
       <div id='result'></div>
       <input type="hidden" id="snumVal" name="snumVal" value="">
-      <table style="width: 1200px;" border="1" >
-         <tr align="center" height="2" bgcolor="#0b3f9a" >
+      <table style="width: 100%;" border="1">
+         <tr align="center" height="2" bgcolor="ghostwhite">
             <td width="50">
                <input type="checkbox" id="check_all_4" name="check_all_4">
             </td>
@@ -451,45 +518,28 @@ text-align: left;
             </tr>
          </c:forEach>
       </table>
-       <c:if test="${empty Durian}" > 
-				<h2>가사로 검색한 결과가 없습니다.</h2>
-      </c:if> 
-   	<!-- ------------------페이징---------------------------->
-	<!--** Page Criteria 추가   
-    1) First << ,  Prev < : enabled 여부
-    2) sPage~ePage 까지 displayPageNo 값 만큼 출력, 
-    3) Next >  ,   Last >> : enabled 여부
-	-->
-<div  align="center"style="font-size: 20px; ">
-	<!-- ** ver01 : pageMaker.makeQuery(?) -->
-	<!-- ** ver02 : pageMaker.searchQuery(?)  -->
-	<!-- 1) First << ,  Prev < : enabled 여부 -->
-	<c:if test="${pageMaker4.prev && pageMaker4.sPageNo>1 }">
-		<a href="mSearch${pageMaker4.searchQuery(1)}">First</a>&nbsp;  
-		<!-- "bpage?currPage=1" -->
-		<a href="mSearch${pageMaker4.searchQuery(pageMaker4.sPageNo-1)}">Prev</a>&nbsp;&nbsp;
-	</c:if>
-	
-	<!-- 2) sPage~ePage 까지 displayPageNo 값 만큼 출력, -->
-	<c:forEach var="i" begin="${pageMaker4.sPageNo}" end="${pageMaker4.ePageNo}">
-		<c:if test="${i==pageMaker4.cri.currPage}">
-			<font size="5" color="Orange">${i}&nbsp;</font>
-		</c:if>
-		<c:if test="${i!=pageMaker4.cri.currPage}">
-			<a href="mSearch${pageMaker4.searchQuery(i)}">${i}</a>&nbsp;
-		</c:if>
-		<!-- 삼항식과 비교  
-		<c:out value="${i==pageMaker.cri.currPage ? 'class=active' : '' }"/>
-		-->
-	</c:forEach>
-		
-	<!-- 3) Next >  ,   Last >> : enabled 여부	 -->
-	<c:if test="${pageMaker4.next && pageMaker4.ePageNo>0}">
-		<a href="mSearch${pageMaker4.searchQuery(pageMaker4.ePageNo+1)}">&nbsp;&nbsp;Next</a>&nbsp;  
-		<a href="mSearch${pageMaker4.searchQuery(pageMaker4.lastPageNo)}">Last</a>&nbsp;&nbsp;
-	</c:if>
-	</div>
-	</form>
-  <!--  -----------------------------------------------가사 검색 end--------------------------------------------------- -->
+      <c:if test="${empty Durian}">
+         <h2>가사로 검색한 결과가 없습니다.</h2>
+      </c:if>
+      <div id="totalSearch">
+         <a href="searchLyrics">가사명으로 검색 전체보기></a>
+      </div>
+   </form>
+   <br>
+   <footer>
+      <div id="footerinfo">
+         <a href="javascript:;" class="footergroup" id="introcompany">회사 소개</a>
+         &nbsp;&nbsp; <font class="footerbar">|</font> &nbsp;&nbsp;
+         <a href="javascript:;" class="footergroup" id="termsp">이용약관</a>
+         &nbsp;&nbsp; <font class="footerbar">|</font> &nbsp;&nbsp;
+         <a href="javascript:;" class="footergroup" id="privacy">개인정보처리방침</a>
+         &nbsp;&nbsp; <font class="footerbar">|</font> &nbsp;&nbsp;
+         <a href="javascript:;" class="footergroup" id="youth">청소년보호정책</a>
+      </div>
+      <div id="footerlist">
+         <font>G-MUSIC</font> &nbsp;&nbsp; <font class="footerbar">|</font> &nbsp;&nbsp; 그린 컴퓨터 아카데미 &nbsp;&nbsp; <font class="footerbar">|</font> &nbsp;&nbsp; 공동작업 : 김지수, 남철우, 정재필, 정현근 &nbsp;&nbsp; <font class="footerbar">|</font> &nbsp;&nbsp; 사업자등록번호 : ???-??-????? <br> 문의전화 : 0000-0000 (평일 09:00 ~ 05:00) &nbsp;&nbsp; <font class="footerbar">|</font> &nbsp;&nbsp; 이메일 : gproject @ naver.com
+      </div>
+   </footer>
+
 </body>
 </html>

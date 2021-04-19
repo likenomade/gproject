@@ -14,8 +14,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
+import criteria.Criteria;
 import criteria.PageMaker;
-import criteria.SearchCriteria;
+import criteria.PageMaker2;
+import criteria.PageMaker3;
 import lombok.extern.log4j.Log4j;
 import service.MusicService;
 import vo.MusicVO;
@@ -27,57 +29,79 @@ public class GmusicController {
 	@Autowired
 	MusicService service;
 
-	@RequestMapping(value = "/mSearch")
-	public ModelAndView mSearch(ModelAndView mv, SearchCriteria cri, PageMaker pageMaker,
-			PageMaker pageMaker2,PageMaker pageMaker3,PageMaker pageMaker4) {
+	  @RequestMapping(value = "/mSearch") // 통합검색
+	   public ModelAndView mSearch(ModelAndView mv, Criteria cri, PageMaker pageMaker) {
 
-		System.out.println(cri.getKeyword());
+	      System.out.println(cri.getKeyword());
 
-		cri.setRowPerPage(5); // 한 페이지당 20곡씩 출력
-		cri.setSnoEno();
+	      cri.setRowPerPage(10);
+	      cri.setSnoEno();
 
+	      mv.addObject("Banana", service.searchSnameList(cri));
+	      mv.addObject("Carot", service.searchSingerNameList(cri));
+	      mv.addObject("Durian", service.searchLyricsList(cri));
 
-		//	mv.addObject("Apple",service.searchAllList(cri)); 
-		mv.addObject("Banana",service.searchSnameList(cri)); 
-		mv.addObject("Carot",service.searchSingerNameList(cri)); 
-		mv.addObject("Durian",service.searchLyricsList(cri)); 
+	      pageMaker.setCri(cri);
+	      mv.addObject("Banana2", service.searchRowCountSname(cri));
+	      mv.addObject("Carot2", service.searchRowCountSingerName(cri));
+	      mv.addObject("Durian2", service.searchRowCountLyrics(cri));
 
+	      mv.addObject("pageMaker", pageMaker);
 
-		// 3) PageMaker  통합검색
-		pageMaker.setCri(cri);
-		pageMaker.setTotalRowAll(service.searchRowCountAll(cri)); //ver02
-		mv.addObject("pageMaker",pageMaker);
+	      mv.setViewName("musicview/musicSearch");
+	      return mv;
+	   } // mSearch
+	   /*--------------------------------------------아직 실행이 안된부분----------------------------------------------*/
 
-		//pageMaker2.setCriSname(cri);
+	   @RequestMapping(value = "/searchSname") // 곡 검색
+	   public ModelAndView searchSname(ModelAndView mv, Criteria cri, PageMaker pageMaker) {
 
+	      cri.setSnoEno();
+	      mv.addObject("Banana", service.searchSnameList(cri));
 
-		/*
-		 * pageMaker2.setTotalRowSname(service.searchRowCountSname(cri));
-		 * mv.addObject("pageMaker2",pageMaker2);
-		 * 
-		 * pageMaker3.setTotalRow(service.searchRowCountSingerName(cri));
-		 * mv.addObject("pageMaker3",pageMaker3);
-		 * 
-		 * pageMaker4.setTotalRowLyrics(service.searchRowCountLyrics(cri));
-		 * mv.addObject("pageMaker4",pageMaker4);
-		 */
+	      pageMaker.setCri(cri);
+	      pageMaker.setTotalRow(service.searchRowCountSname(cri));
 
+	      mv.addObject("pageMaker", pageMaker);
+	      mv.setViewName("musicview/SearchSname");
 
+	      return mv;
+	   } // mSearch
 
-		/*
-		 * pageMaker2.setCriSname(cri);
-		 * pageMaker2.setTotalRowSname(service.searchRowCountSname(cri));
-		 * mv.addObject("pageMaker2",pageMaker2);
-		 * 
-		 * 
-		 * pageMaker3.setCriSingerName(cri);
-		 * pageMaker3.setTotalRow(service.searchRowCountSingerName(cri));
-		 * mv.addObject("pageMaker3",pageMaker3);
-		 */
+	   @RequestMapping(value = "/searchSingerName") // 가수 검색
+	   public ModelAndView searchSingerName(ModelAndView mv, Criteria cri, PageMaker pageMaker) {
 
-		mv.setViewName("musicview/musicSearch");	
-		return mv;
-	} //mSearch
+	      cri.setRowPerPage(10);
+	      cri.setSnoEno();
+
+	      mv.addObject("Carot", service.searchSingerNameList(cri));
+
+	      pageMaker.setCri(cri);
+	      pageMaker.setTotalRow(service.searchRowCountSingerName(cri));
+	      mv.addObject("pageMaker", pageMaker);
+
+	      mv.setViewName("musicview/SearchSingerName");
+
+	      return mv;
+	   } // mSearch
+
+	   @RequestMapping(value = "/searchLyrics") // 가사 검색
+	   public ModelAndView searchLyrics(ModelAndView mv, Criteria cri, PageMaker pageMaker) {
+
+	      cri.setRowPerPage(10); // 한 페이지당 20곡씩 출력 cri.setSnoEno();
+	      cri.setSnoEno();
+
+	      mv.addObject("Durian", service.searchLyricsList(cri));
+
+	      pageMaker.setCri(cri);
+	      pageMaker.setTotalRow(service.searchRowCountLyrics(cri));
+	      mv.addObject("pageMaker", pageMaker);
+
+	      mv.setViewName("musicview/SearchLyrics");
+
+	      return mv;
+	   } // mSearch
+	   /*------------------------------------------------------------------------------------------*/
 
 	@RequestMapping(value = "/musicCount")
 	public void musicCount(HttpServletRequest request, ModelAndView mv, MusicVO vo) {
@@ -88,7 +112,7 @@ public class GmusicController {
 
 	//musiclist
 	@RequestMapping(value = "/musiclist")
-	public ModelAndView musictest(ModelAndView mv) {
+	public ModelAndView musiclist(ModelAndView mv) {
 
 		List<MusicVO> list = service.selectList();
 

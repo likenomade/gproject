@@ -26,14 +26,16 @@ public interface BoardService {
 	public int replyInsert(BoardVO vo);// 답글등록
 
 	// ** SearchCriteria PageList
-	public int searchRowCountF(Criteria cri);
-
-	public List<FaqVO> searchFList(Criteria cri);
+	/*
+	 * public int searchRowCountF(SearchCriteria cri);
+	 * 
+	 * public List<FaqVO> searchFList(SearchCriteria cri);
+	 */
 
 // ** Criteria PageList
 	public int totalRowCount();
 
-	public List<FaqVO> criFList(Criteria cri);
+	//public List<FaqVO> criFList(Criteria cri);
 
 // ** Page BoardList
 	public PageVO<FaqVO> pageList(PageVO<FaqVO> vo);

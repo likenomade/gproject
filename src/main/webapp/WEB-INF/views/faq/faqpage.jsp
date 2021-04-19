@@ -175,12 +175,13 @@ footer {
             $('#keyword').val('');
          }
       });
-      $('#searchBtn').on(
-            "click",
-            function() {
-               self.location = "faq" + "${pageMaker.makeQuery(1)}"
-                     + "&searchType=" + $('#searchType').val()
-                     + "&keyword=" + $('#keyword').val();
+      $('#searchBtn').on( "click", function() {
+               self.location = "faq"
+                + "${pageMaker.makeQuery(1)}"
+                + "&searchType=" 
+                + $('#searchType').val()
+                + "&keyword=" 
+                + $('#keyword').val();
             }); //click 
 
    }); //ready

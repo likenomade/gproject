@@ -25,7 +25,7 @@ public class BoardController {
 	FaqService FAQservice;
 
 	@RequestMapping(value = "/faq")
-	public ModelAndView faq(ModelAndView mv, HttpServletRequest request,Criteria cri, PageMaker pageMaker) {
+	public ModelAndView faq(ModelAndView mv, Criteria cri, PageMaker pageMaker) {
 
 		cri.setRowPerPage(7);
 		cri.setSnoEno();
@@ -33,7 +33,6 @@ public class BoardController {
 
 		// 3) PageMaker 처리
 		pageMaker.setCri(cri);
-		//pageMaker.setTotalRow(service.totalRowCount()); //ver01
 		pageMaker.setTotalRow(FAQservice.searchRowCountF(cri)); //ver02
 
 		mv.addObject("pageMaker",pageMaker);

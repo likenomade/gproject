@@ -28,7 +28,7 @@ public class FaqServiceImpl implements FaqService {
 		return dao.totalRowCount();
 	}
 	public List<FaqVO> criFList(Criteria cri) {
-		return dao.criBList(cri);
+		return dao.criFList(cri);
 	}
 
 	// ** Page BoardList

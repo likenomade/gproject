@@ -67,19 +67,6 @@
 </sql>
 
 
-
- <select id="searchAllList" resultType="vo.MusicVO">  <!-- searchMList에서 M은통합 , N 곡이름..가운데본뜸 -->
- <if test="searchType=='all'.toString()">
- <![CDATA[
- select snum,image,sname,singername,stitle,downloadfile,genre,rnum from
- (select m.* , ROW_NUMBER() OVER(order by snum desc) rnum from music m 
-   where snum > 0 ]]>
-  <include refid="search1"></include>
-  where rnum between #{sno} and #{eno}
-  
-</if>
-</select>
-
  <select id="searchSnameList" resultType="vo.MusicVO">
  <if test="searchType=='all'.toString()">
  <![CDATA[
@@ -114,14 +101,6 @@
 </if>
 </select>
 
- 
-<select id="searchRowCountAll" resultType="int">
-<![CDATA[ 	
-	select count(*) from music where ( snum > 0 ]]>
-	<!-- 조건 id : search -->
-	<include refid="search1"></include>   <!-- 여기때문에 500난 것도 있엇음. -->
-</select>																<!-- 일단은 search1만됨 -->
-
 <select id="searchRowCountSname" resultType="int">
 <![CDATA[ 	
 	select count(*) from music where ( snum > 0 ]]>
@@ -143,22 +122,31 @@
 	<include refid="search4"></include>  
 </select>														
 
-
-
 <!-- PageList -->
-<select id="totalRowCountAll" resultType="int">
-	 select count(*) from snum 
-</select> 
 
-<select id="totalRowCountSname" resultType="int">
+<!-- <select id="totalRowCountSname" resultType="int">
 	 select count(*) from snum 
-</select> 
-
+</select>  -->
 
 <select id="pageMList" resultType="vo.MusicVO"> 
   select snum,image,sname,singername,stitle,downloadfile,genre,rnum  
   from music where rnum between #{sno} and #{eno}  <!-- //원래 이문장만 있었음 -->
 </select>
+
+
+
+<select resultType="vo.MusicVO" id="snameList">
+
+<!-- select * from music where genre=#{genre} order by releasedate desc , sname -->
+
+select snum, sname, stitle, singername, releasedate, genre, replace(lyrics,'-','') lyrics, country, musicurl, 
+
+downloadfile, image, count, rnum from (select m.*, ROW_NUMBER() OVER(order by releasedate desc , sname) rnum from 
+
+(select * from music where sname= #{sname} ) m ) where rnum between #{sno} and #{eno} 
+</select>
+
+<select resultType="int" id="snameRowCount"> select count(*) from music where sname = #{sname} </select>
 
 
 </mapper>  

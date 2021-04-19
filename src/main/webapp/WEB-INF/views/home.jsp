@@ -22,6 +22,9 @@
 body {
 	margin: 0;
 }
+#searchType{
+	display:none;
+}
 
 hr {
 	margin-top: 0px;
@@ -228,12 +231,10 @@ a {
 }
 /*footer---------------------------- */
 </style>
+
 <script type="text/javascript">
 $(function(){
-	
 	$('#searchBtn').on("click",function(){
-		alert($('#searchType').val());
-		alert($('#keyword').val());
 		self.location="mSearch"
 					 +"?currPage=1" 
 					/* +"${pageMaker.makeQuery(1)}" */
@@ -290,13 +291,16 @@ $(function(){
 			<a href="home" id="logofont">GMUSIC</a>
 			<form action="mSearch" id="search" name="search" class="search">
 			
-			<select name="searchType" id="searchType">
+		<%-- 	<select name="searchType" id="searchType" style="display:none"> <!-- 여기 수정해야됨 input으로 -->
 						<option value="all"
-				<c:out value="${pageMaker.cri.searchType=='snm/sgr/tt/ly/gne' ? 'selected' : ''}" />>All</option>
-		</select> 
+				<c:out value="${pageMaker.cri.searchType=='all' ? 'selected' : ''}" />>All</option>
+		</select>  --%>
+		<input type="text" name="searchType" id="searchType" maxlength="35" size="50"
+		 style="vertical-align: middle;" value="all">
+		 
 		<input type="text" name="keyword" id="keyword" maxlength="35" size="50"
-		 style="vertical-align: middle;" value="${pageMaker.cri.keyword}"   value2="${pageMaker2.cri.keyword}"
-		 value3="${pageMaker3.cri.keyword}" value4="${pageMaker4.cri.keyword}" >  
+		 style="vertical-align: middle;" value="${pageMaker.cri.keyword}">  
+		 
 		 <button type="button"  id="searchBtn" style="vertical-align: middle;" >
 		 Search</button>    
 			</form>

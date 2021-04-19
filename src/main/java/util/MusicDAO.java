@@ -7,7 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import criteria.Criteria;
-import criteria.SearchCriteria;
 import vo.MusicVO;
 import vo.PageVO;
 
@@ -36,65 +35,45 @@ public class MusicDAO {
 
 	/*-------------검색부분 추가--------------*/
 	//SearchCriteria PageList
-	public int searchRowCountAll(SearchCriteria cri) {
-		return sqlSession.selectOne(NS+"searchRowCountAll",cri);
-	}  
-	public int searchRowCountSname(SearchCriteria cri) {
+	public int searchRowCountSname(Criteria cri) {
 		return sqlSession.selectOne(NS+"searchRowCountSname",cri); 
 	}
-	public int searchRowCountSingerName(SearchCriteria cri) {
+	public int searchRowCountSingerName(Criteria cri) {
 		return sqlSession.selectOne(NS+"searchRowCountSingerName",cri); 
 	}
-	public int searchRowCountLyrics(SearchCriteria cri) {
+	public int searchRowCountLyrics(Criteria cri) {
 		return sqlSession.selectOne(NS+"searchRowCountLyrics",cri); 
 	}
 
 
-	public List<MusicVO>searchAllList(SearchCriteria cri) {
-		return sqlSession.selectList(NS+"searchAllList",cri);
-	}
-	public List<MusicVO> searchSnameList(SearchCriteria cri) {
+	public List<MusicVO> searchSnameList(Criteria cri) {
 		return sqlSession.selectList(NS+"searchSnameList",cri);
 	}
-	public List<MusicVO> searchSingerNameList(SearchCriteria cri) {
+	public List<MusicVO> searchSingerNameList(Criteria cri) {
 		return sqlSession.selectList(NS+"searchSingerNameList",cri);
 	}
-	public List<MusicVO> searchLyricsList(SearchCriteria cri) {
+	public List<MusicVO> searchLyricsList(Criteria cri) {
 		return sqlSession.selectList(NS+"searchLyricsList",cri);
 	}
 
-
 	// ** Criteria PageList	
-	public List<MusicVO> criAllList(Criteria cri) {
-		return sqlSession.selectList(NS+"pageAllList",cri);
-	}
 	public List<MusicVO> criSnameList(Criteria cri) {
-		return sqlSession.selectList(NS+"pageSnameList",cri);
+		return sqlSession.selectList(NS+"criSnameList",cri);
 	}
 	public List<MusicVO> criSingerNameList(Criteria cri) {
-		return sqlSession.selectList(NS+"pageSnameList",cri);
+		return sqlSession.selectList(NS+"criSingerNameList",cri);
 	}
 	public List<MusicVO> criLyricsList(Criteria cri) {
-		return sqlSession.selectList(NS+"pageSnameList",cri);
+		return sqlSession.selectList(NS+"criLyricsList",cri);
 	}
 
-	/*---------------------------------------------------*/
-	// ** Page BoardList
-	/*
-	 * 
-	 * public int totalRowCountAll() { return
-	 * sqlSession.selectOne(NS+"totalRowCountAll"); } public int
-	 * totalRowCountSname() { return sqlSession.selectOne(NS+"totalRowCountSname");
-	 * } public int totalRowCountSingerName() { return
-	 * sqlSession.selectOne(NS+"totalRowCountSingerName"); } public int
-	 * totalRowCountLyrics() { return
-	 * sqlSession.selectOne(NS+"totalRowCountLyrics"); }
-	 * 
-	 * public List<MusicVO> pageMList(PageVO<MusicVO> vo) { return
-	 * sqlSession.selectList(NS+"pageMList",vo); }
-	 */
+	// ** genreList
+		public List<MusicVO> snameList(Criteria cri) {
+			return sqlSession.selectList(NS + "snameList", cri);
+		} // SnameList
 
-
-
+		public int snameRowCount(MusicVO vo) {
+			return sqlSession.selectOne(NS+ "snameRowCount",vo);
+		}
 
 } // class

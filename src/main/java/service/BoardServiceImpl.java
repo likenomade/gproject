@@ -56,23 +56,23 @@ public class BoardServiceImpl implements BoardService{
 	
 
 	// ** SearchCriteria PageList
-	public int searchRowCountF(Criteria cri) {
-		return Fdao.searchRowCountF(cri);
-	}
-	public List<FaqVO> searchFList(Criteria cri) {
-			return Fdao.searchFList(cri);
-	}
+	/*
+	 * public int searchRowCountF(Criteria cri) { return Fdao.searchRowCountF(cri);
+	 * } public List<FaqVO> searchFList(Criteria cri) { return
+	 * Fdao.searchFList(cri); }
+	 */
 	
 	// ** Criteria PageList
 	public int totalRowCount() {
 		return Fdao.totalRowCount();
 	}
-	public List<FaqVO> criFList(Criteria cri) {
-		return Fdao.criBList(cri);
-	}
 
+	/*
+	 * public List<FaqVO> criFList(Criteria cri) { return Fdao.criFList(cri); }
+	 */
 	// ** Page BoardList
 	// => totalRowCount set, 출력할 board row set 
+	
 	public PageVO<FaqVO> pageList(PageVO<FaqVO> vo) {
 		vo.setTotalRowCount(Fdao.totalRowCount());
 		vo.setList(Fdao.pageList(vo));

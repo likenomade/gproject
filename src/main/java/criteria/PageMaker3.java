@@ -6,7 +6,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 //*** Criteria 를 이용해서 출력할 Page View에 필요한 값을 완성
 
-public class PageMaker {
+public class PageMaker3 {
 private int totalRow; // Table의 전체 row 갯수
 private int sPageNo;  // View에 표시할 첫 PageNo
 private int ePageNo;  // View에 표시할 끝 PageNo
@@ -121,16 +121,6 @@ public String toString() {
 	return "PageMaker [totalRow=" + totalRow + ", sPageNo=" + sPageNo + ", ePageNo=" + ePageNo + ", prev=" + prev
 			+ ", next=" + next + ", displayPageNo=" + displayPageNo + ", lastPageNo=" + lastPageNo + ", cri=" + cri
 			+ "]";
-}
-
-public void setTotalRowSname(int totalRow) {
-	   this.totalRow=totalRow;
-	   calcData();
-}
-
-public void setTotalRowSingerName(int totalRow) {
-	   this.totalRow=totalRow;
-	   calcData();
 }
 
 public void setTotalRowLyrics(int totalRow) {

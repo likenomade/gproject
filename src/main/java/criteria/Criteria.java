@@ -7,6 +7,7 @@ public class Criteria {
 	private int rowPerPage;		// 페이지당 보여줄 글 갯수
 	private int sno;  		// startRno 페이지의 시작 글
 	private int eno;  		// endRno 페이지의 마지막 글
+	private String sname;
 	
 	private String searchType;
 	public String keyword; //여기도 원래 private 였음.
@@ -91,6 +92,11 @@ public class Criteria {
 	public String SearchType() { //home searchType
 		return searchType;
 	}
+
+	public String setSname(String sname) {
+		return sname;
+	}
+
 
 	
 }// class

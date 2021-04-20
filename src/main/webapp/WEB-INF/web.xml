@@ -57,5 +57,5 @@
 		<error-code>500</error-code>
 		<location>/WEB-INF/views/errorPage/exceptionMessage.jsp</location>
 	</error-page>
-
+	
 </web-app>

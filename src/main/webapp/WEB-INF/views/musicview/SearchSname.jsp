@@ -1,5 +1,4 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8"
-	pageEncoding="UTF-8"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <!DOCTYPE html>
 <html>
@@ -8,11 +7,29 @@
 <title>검색음악</title>
 <script src="resources/myLib/jquery-3.2.1.min.js"></script>
 <link rel="preconnect" href="https://fonts.gstatic.com">
-<link
-	href="https://fonts.googleapis.com/css2?family=Cute+Font&display=swap"
-	rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cute+Font&display=swap" rel="stylesheet">
 <script src="resources/myLib/footer.js"></script>
 <style>
+#logo {
+	font-size: 20;
+	color: #0b3f9a;
+	font-family: 'Chela One', cursive;
+}
+
+#searchBtn {
+	margin-bottom: 3px;
+}
+
+#logofont {
+	font-family: 'Chela One', cursive;
+}
+
+#searchdiv {
+	height: 80px;
+	padding: 22px 262px 10px 262px;
+	/* height: 50px; */
+}
+
 #musicSearch {
 	margin: 64px 262px -8px;
 }
@@ -109,7 +126,7 @@ footer {
 footer {
 	height: 100px;
 	margin: 0 auto; /* 중앙정렬 */
-	width: 75%;
+	width: 100%;
 }
 
 #footerinfo {
@@ -227,13 +244,28 @@ footer {
    }
 </script>
 
+<script type="text/javascript">
+$(function(){
+   $('#searchBtn').on("click",function(){
+      self.location="searchSname"
+                +"?currPage=1" 
+               /* +"${pageMaker.makeQuery(1)}" */
+               +"&searchType="
+               +$('#searchType').val()
+               +"&keyword="
+               +$('#keyword').val();
+      // => ?currPage=7&rowPerPage=10&searchType=tc&keyword=java
+   }); //click
+});//ready
+
+</script>
+
 
 </head>
 <body>
-
 	<header>
-		<a href="home"> <img src="resources/uploadImage/gm.png"
-			width="40px" height="40px">
+		<a href="home">
+			<img src="resources/uploadImage/gm.png" width="40px" height="40px">
 		</a>
 		<ul id="headermenu">
 			<!-- 조건주고 로그인 상태면 로그인 없애고 로그아웃으로 -->
@@ -262,39 +294,40 @@ footer {
 	<nav>
 		<ul>
 			<li><a href="home">메인 페이지</a>
-			<li><a href="javascript:;" onClick="location.reload()"
-				style="color: #0b3f9a; font-size: 25px;">통합 검색</a>
-			<li><a href="searchSname">곡 검색</a>
-			<li><a href="searchSingername">아티스트 검색</a>
-			<li><a href="searchLyrics">가사 검색</a>
+			<li><a href="mSearch?keyword=${pageMaker.cri.keyword}&searchType=all">통합 검색</a>
+			<li><a href="javascript:;" onClick="location.reload()" style="color: #0b3f9a; font-size: 25px;">곡 검색</a>
+			<li><a href="searchSingerName?keyword=${pageMaker.cri.keyword}&searchType=all">아티스트 검색</a>
+			<li><a href="searchLyrics?keyword=${pageMaker.cri.keyword}&searchType=all">가사 검색</a>
 		</ul>
 	</nav>
 	<br>
-	
-		<div id="searchdiv">    <!-- 검색창 -->
-			<a href="home" id="logofont">GMUSIC</a>
-			<form action="mSearch" id="search" name="search" class="search">
-			
-			<select name="searchType" id="searchType" style="display:none">
-						<option value="all"
-				<c:out value="${pageMaker.cri.searchType=='snm/sgr/tt/ly/gne' ? 'selected' : ''}" />>All</option>
-		</select> 
-		<input type="text" name="keyword" id="keyword" maxlength="35" size="50"
-		 style="vertical-align: middle;" value="${pageMaker.cri.keyword}"  value2="${pageMaker2.cri.keyword}"
-		 value3="${pageMaker3.cri.keyword}" >  
-		 <button type="button"  id="searchBtn" style="vertical-align: middle;" >
-		 Search</button>    
+
+	<div id="searchdiv">
+		<div id="logo">
+			<h1>GMUSIC</h1>
+			<form action="searchSname" id="search" name="search" class="search">
+
+				<select name="searchType" id="searchType" style="display: none">
+					<option value="all" <c:out value="${pageMaker.cri.searchType=='snm/sgr/tt/ly/gne' ? 'selected' : ''}" />>All</option>
+				</select>
+				<input type="text" name="keyword" id="keyword" maxlength="35" size="50" style="vertical-align: middle;" value="${UserKeyword}">
+				<button type="button" id="searchBtn" style="vertical-align: middle;">Search</button>
 			</form>
 		</div>
-      
-	<form id="searchSname" name="searchSname" align="center">
+	</div>
+
+	<form id="musicSearch" name="musicSearch" align="center">
+		<h3 align="left">'${UserKeyword}'에 대한 검색 결과입니다.</h3>
+
 		<!-- 곡검색 -->
 		<h1>곡 검색</h1>
 		<button type="button" onclick="getCheckboxValue()">플레이리스트</button>
 		<input type="hidden" id="snumVal" name="snumVal" value="">
 		<table style="width: 100%;" border="1">
 			<tr align="center" height="2" bgcolor="ghostwhite">
-				<td width="50"><input type="checkbox" id="check_all" name="check_all"></td>
+				<td width="50">
+					<input type="checkbox" id="check_all" name="check_all">
+				</td>
 				<td width="40">번 호</td>
 				<td>Image</td>
 				<td>곡 명</td>
@@ -304,74 +337,75 @@ footer {
 			</tr>
 			<c:forEach var="row" items="${Banana}" varStatus="vs">
 				<tr>
-					<td align="center"><input type="checkbox"
-						class="normalCheck" id="snum${row.snum}" name="snum"
-						value="${row.snum}"></td>
+					<td align="center">
+						<input type="checkbox" class="normalCheck" id="snum${row.snum}" name="snum" value="${row.snum}">
+					</td>
 					<td align="center">${vs.count}</td>
-					<td><img src="${row.image}" width="70" height="70"></td>
+					<td>
+						<img src="${row.image}" width="70" height="70">
+					</td>
 					<td>
 						<button type="button" name="sname" value="${row.snum}">${row.sname}</button>
 					</td>
 					<td>${row.singername}</td>
 					<td>${row.stitle}</td>
-					<td><a href="dnload?dnfile=${row.downloadfile}">${row.downloadfile}</a>
+					<td>
+						<a href="dnload?dnfile=${row.downloadfile}">${row.downloadfile}</a>
 					</td>
 				</tr>
 			</c:forEach>
 		</table>
-		<c:if test="${empty Banana}">
-			<h2>곡 검색한 결과가 없습니다.</h2>
-		</c:if>
-		<!-- ------------------페이징---------------------------->
-		<!--** Page Criteria 추가   
+	<c:if test="${empty Banana}">
+		<h2>곡 검색한 결과가 없습니다.</h2>
+	</c:if>
+	</form>
+
+	<!-- ------------------페이징---------------------------->
+	<!--** Page Criteria 추가   
     1) First << ,  Prev < : enabled 여부
     2) sPage~ePage 까지 displayPageNo 값 만큼 출력, 
     3) Next >  ,   Last >> : enabled 여부
 	-->
-		<div  align="center"style="font-size: 20px; ">
-	<!-- ** ver01 : pageMaker.makeQuery(?) -->
-	<!-- ** ver02 : pageMaker.searchQuery(?)  -->
-	<!-- 1) First << ,  Prev < : enabled 여부 -->
-	
-	<c:if test="${pageMaker.prev && pageMaker.sPageNo>1 }">
-		<a href="searchSname${pageMaker.searchQuery(1)&sname=${sname}">First</a>&nbsp;  
+	<div align="center" style="font-size: 20px;">
+		<!-- ** ver01 : pageMaker.makeQuery(?) -->
+		<!-- ** ver02 : pageMaker.searchQuery(?)  -->
+		<!-- 1) First << ,  Prev < : enabled 여부 -->
+
+		<c:if test="${pageMaker.prev && pageMaker.sPageNo>1}">
+			<a href="searchSname${pageMaker.searchQuery(1)}">First</a>&nbsp;  
 		<!-- "bpage?currPage=1" -->
-		<a href="searchSname${pageMaker.searchQuery(pageMaker.sPageNo-1)&sname=${sname}">Prev</a>&nbsp;&nbsp;
+			<a href="searchSname${pageMaker.searchQuery(pageMaker.sPageNo-1)}">Prev</a>&nbsp;&nbsp;
 	</c:if>
-	
-	<!-- 2) sPage~ePage 까지 displayPageNo 값 만큼 출력, -->
-	<c:forEach var="i" begin="${pageMaker.sPageNo}" end="${pageMaker.ePageNo}">
-		<c:if test="${i==pageMaker.cri.currPage}">
-			<font size="5" color="Orange">${i}&nbsp;</font>
+
+		<!-- 2) sPage~ePage 까지 displayPageNo 값 만큼 출력, -->
+		<c:forEach var="i" begin="${pageMaker.sPageNo}" end="${pageMaker.ePageNo}">
+			<c:if test="${i==pageMaker.cri.currPage}">
+				<font size="5" color="Orange">${i}&nbsp;</font>
+			</c:if>
+			<c:if test="${i!=pageMaker.cri.currPage}">
+				<a href="searchSname${pageMaker.searchQuery(i)}">${i}</a>&nbsp;
 		</c:if>
-		<c:if test="${i!=pageMaker.cri.currPage}">
-			<a href="searchSname${pageMaker.searchQuery(i)&sname=${sname}">${i}</a>&nbsp;
-		</c:if>
-	</c:forEach>
-		
-	<!-- 3) Next >  ,   Last >> : enabled 여부	 -->
-	<c:if test="${pageMaker.next && pageMaker.ePageNo>0}">
-		<a href="searchSname${pageMaker.searchQuery(pageMaker.ePageNo+1)&sname=${sname}">&nbsp;&nbsp;Next</a>&nbsp;  
-		<a href="searchSname${pageMaker.searchQuery(pageMaker.lastPageNo)&sname=${sname}">Last</a>&nbsp;&nbsp;
+		</c:forEach>
+
+		<!-- 3) Next >  ,   Last >> : enabled 여부	 -->
+		<c:if test="${pageMaker.next && pageMaker.ePageNo>0}">
+			<a href="searchSname${pageMaker.searchQuery(pageMaker.ePageNo+1)}">&nbsp;&nbsp;Next</a>&nbsp;  
+		<a href="searchSname${pageMaker.searchQuery(pageMaker.lastPageNo)}">Last</a>&nbsp;&nbsp;
 	</c:if>
 	</div>
+	<br>
 	<footer>
 		<div id="footerinfo">
-			<a href="javascript:;" class="footergroup" id="introcompany">회사
-				소개</a> &nbsp;&nbsp; <font class="footerbar">|</font> &nbsp;&nbsp; <a
-				href="javascript:;" class="footergroup" id="termsp">이용약관</a>
-			&nbsp;&nbsp; <font class="footerbar">|</font> &nbsp;&nbsp; <a
-				href="javascript:;" class="footergroup" id="privacy">개인정보처리방침</a>
-			&nbsp;&nbsp; <font class="footerbar">|</font> &nbsp;&nbsp; <a
-				href="javascript:;" class="footergroup" id="youth">청소년보호정책</a>
+			<a href="javascript:;" class="footergroup" id="introcompany">회사소개</a>
+			&nbsp;&nbsp; <font class="footerbar">|</font> &nbsp;&nbsp;
+			<a href="javascript:;" class="footergroup" id="termsp">이용약관</a>
+			&nbsp;&nbsp; <font class="footerbar">|</font> &nbsp;&nbsp;
+			<a href="javascript:;" class="footergroup" id="privacy">개인정보처리방침</a>
+			&nbsp;&nbsp; <font class="footerbar">|</font> &nbsp;&nbsp;
+			<a href="javascript:;" class="footergroup" id="youth">청소년보호정책</a>
 		</div>
 		<div id="footerlist">
-			<font>G-MUSIC</font> &nbsp;&nbsp; <font class="footerbar">|</font>
-			&nbsp;&nbsp; 그린 컴퓨터 아카데미 &nbsp;&nbsp; <font class="footerbar">|</font>
-			&nbsp;&nbsp; 공동작업 : 김지수, 남철우, 정재필, 정현근 &nbsp;&nbsp; <font
-				class="footerbar">|</font> &nbsp;&nbsp; 사업자등록번호 : ???-??-????? <br>
-			문의전화 : 0000-0000 (평일 09:00 ~ 05:00) &nbsp;&nbsp; <font
-				class="footerbar">|</font> &nbsp;&nbsp; 이메일 : gproject @ naver.com
+			<font>G-MUSIC</font> &nbsp;&nbsp; <font class="footerbar">|</font> &nbsp;&nbsp; 그린 컴퓨터 아카데미 &nbsp;&nbsp; <font class="footerbar">|</font> &nbsp;&nbsp; 공동작업 : 김지수, 남철우, 정재필, 정현근 &nbsp;&nbsp; <font class="footerbar">|</font> &nbsp;&nbsp; 사업자등록번호 : ???-??-????? <br> 문의전화 : 0000-0000 (평일 09:00 ~ 05:00) &nbsp;&nbsp; <font class="footerbar">|</font> &nbsp;&nbsp; 이메일 : gproject @ naver.com
 		</div>
 	</footer>
 

@@ -3,150 +3,165 @@
   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.ncs.MusicMapper">
 
-<!-- ******************************* -->
-<select id="selectList" resultType="vo.MusicVO">
-	 select * from music order by releasedate desc , sname
-</select>
+	<!-- ******************************* -->
+	<select id="selectList" resultType="vo.MusicVO">
+		select * from music order by releasedate desc , sname
+	</select>
 
-<select id="selectOne" resultType="vo.MusicVO"> <!-- 노래 재생목록을 위한 sql  -->
-	  select snum, sname, stitle, singername, releasedate, genre, 
-      replace(lyrics,'-','') lyrics, country, musicurl, 
-      downloadfile, image, count from music where snum=#{snum}
-</select>
+	<select id="selectOne" resultType="vo.MusicVO"> <!-- 노래 재생목록을 위한 sql -->
 
-<update id="musicCount"> <!-- count를 위한 sql -->
-	UPDATE music set count=#{count} WHERE snum=#{snum}
-</update>
+		select snum, sname, stitle, singername, releasedate, genre,
+		replace(lyrics,'-','') lyrics, country, musicurl,
+		downloadfile, image, count from music where snum=#{snum}
 
-<!-- 검색 및 페이징 부분 -->
-<sql id="search1">
-  <if test="keyword != null">
-  	<bind name="keyVal" value="'%'+keyword+'%'"/>
-  </if>	
-   <choose>
-  	<when test="searchType=='all'.toString()">   
-  		and upper(sname) Like  '%' || upper(#{keyword}) || '%' 
-  		or upper(singername) Like  '%' || upper(#{keyword}) || '%' 
-  		or upper(stitle) Like  '%' || upper(#{keyword}) || '%' 
-  		or lyrics Like  '%' || #{keyword} || '%' 
-  		or  genre Like  '%' || #{keyword} || '%')
-  	</when>
-  	<otherwise>)</otherwise> 
-  </choose>
-</sql>
+	</select>
 
+	<select id="musicList" resultType="vo.MusicVO">
+		select snum, sname, stitle, singername, releasedate, genre, replace(lyrics,'-','') lyrics,
+		country, musicurl, downloadfile, image, count, rnum
+		from (select m.* , ROW_NUMBER() OVER(order by releasedate desc , sname) rnum from music m )
+		where rnum between #{sno} and #{eno}
+	</select>
 
-<sql id="search2">
-  	<bind name="keyVal" value="'%'+keyword+'%'"/>
-  <choose>
-  	<when test="searchType=='all'.toString()">   
-  		and upper(sname) Like upper(#{keyVal}))
-  	</when>
-  	<otherwise>)</otherwise> 
-  </choose> 
-</sql>
+	<select id="totalRowCount" resultType="int">
+		select count(*) from music
+	</select>
 
-<sql id="search3">
-  	<bind name="keyVal" value="'%'+keyword+'%'"/>
-  <choose>
-  	<when test="searchType=='all'.toString()">   
-  		and upper(singername) Like upper(#{keyVal}))
-  	</when>
-  	<otherwise>)</otherwise> 
-  </choose> 
-</sql>
+	<!-- ********section1_2번. 4개 최신곡 이미지 표현하는 섹션 -->
+	<select id="releasedateList" resultType="vo.MusicVO">
+		 select snum, sname, stitle, singername, releasedate, genre, replace(lyrics,'-','') lyrics, 
+		 country, musicurl, downloadfile, image, count, rnum 
+		 from (select m.*, ROW_NUMBER() OVER(order by releasedate desc , sname) rnum 
+		 from music m ) where rnum between #{sno} and #{eno}
+	</select>
+	
+	<select id="releasedateRowCount" resultType="int">
+		select count(*) from music
+	</select>
+	<!-- section1_2번. 4개 최신곡 이미지 표현하는 섹션************** -->
+	
+	<select id="genreList" resultType="vo.MusicVO">
+		<!-- select * from music where genre=#{genre} order by releasedate desc 
+			, sname -->
+		select snum, sname, stitle, singername, releasedate, genre, replace(lyrics,'-','') lyrics,
+		country, musicurl, downloadfile, image, count, rnum
+		from (select m.*, ROW_NUMBER() OVER(order by releasedate desc , sname) rnum
+		from (select * from music where genre= #{genre} ) m ) 
+		where rnum between #{sno} and #{eno}
+	</select>
 
-<sql id="search4">
-  	<bind name="keyVal" value="'%'+keyword+'%'"/>
-  <choose>
-  	<when test="searchType=='all'.toString()">   
-  		and upper(lyrics) Like upper(#{keyVal}))
-  	</when>
-  	<otherwise>)</otherwise> 
-  </choose> 
-</sql>
+	<select id="genreRowCount" resultType="int">
+		select count(*) from music where genre = #{genre}
+	</select>
 
-
- <select id="searchSnameList" resultType="vo.MusicVO">
- <if test="searchType=='all'.toString()">
- <![CDATA[
- select snum,image,sname,singername,stitle,downloadfile,genre,rnum from
- (select m.* , ROW_NUMBER() OVER(order by snum desc) rnum from music m 
-   where snum > 0 ]]>
-  <include refid="search2"></include>
-  where rnum between #{sno} and #{eno}
-</if>
-</select>
-
-
- <select id="searchSingerNameList" resultType="vo.MusicVO">
- <if test="searchType=='all'.toString()">
- <![CDATA[
- select snum,image,sname,singername,stitle,downloadfile,genre,rnum from
- (select m.* , ROW_NUMBER() OVER(order by snum desc) rnum from music m 
-   where snum > 0 ]]>
-  <include refid="search3"></include>
-  where rnum between #{sno} and #{eno}
-</if>
-</select>
-
- <select id="searchLyricsList" resultType="vo.MusicVO">
- <if test="searchType=='all'.toString()">
- <![CDATA[
- select snum,image,sname,singername,stitle,downloadfile,genre,rnum from
- (select m.* , ROW_NUMBER() OVER(order by snum desc) rnum from music m 
-   where snum > 0 ]]>
-  <include refid="search4"></include>
-  where rnum between #{sno} and #{eno}
-</if>
-</select>
-
-<select id="searchRowCountSname" resultType="int">
-<![CDATA[ 	
-	select count(*) from music where ( snum > 0 ]]>
-	<!-- 조건 id : search -->
-	<include refid="search2"></include>  
-</select>			
-
-<select id="searchRowCountSingerName" resultType="int">
-<![CDATA[ 	
-	select count(*) from music where ( snum > 0 ]]>
-	<!-- 조건 id : search -->
-	<include refid="search3"></include>  
-</select>	
-
-<select id="searchRowCountLyrics" resultType="int">
-<![CDATA[ 	
-	select count(*) from music where ( snum > 0 ]]>
-	<!-- 조건 id : search -->
-	<include refid="search4"></include>  
-</select>														
-
-<!-- PageList -->
-
-<!-- <select id="totalRowCountSname" resultType="int">
-	 select count(*) from snum 
-</select>  -->
-
-<select id="pageMList" resultType="vo.MusicVO"> 
-  select snum,image,sname,singername,stitle,downloadfile,genre,rnum  
-  from music where rnum between #{sno} and #{eno}  <!-- //원래 이문장만 있었음 -->
-</select>
-
-
-
-<select resultType="vo.MusicVO" id="snameList">
-
-<!-- select * from music where genre=#{genre} order by releasedate desc , sname -->
-
-select snum, sname, stitle, singername, releasedate, genre, replace(lyrics,'-','') lyrics, country, musicurl, 
-
-downloadfile, image, count, rnum from (select m.*, ROW_NUMBER() OVER(order by releasedate desc , sname) rnum from 
-
-(select * from music where sname= #{sname} ) m ) where rnum between #{sno} and #{eno} 
-</select>
-
-<select resultType="int" id="snameRowCount"> select count(*) from music where sname = #{sname} </select>
-
+	<update id="musicCount"> <!-- count를 위한 sql -->
+		UPDATE music set count=#{count} WHERE snum=#{snum}
+	</update>
+	
+	<!-- 검색 및 페이징 부분 -->
+	<sql id="search1">
+	  <if test="keyword != null">
+	  	<bind name="keyVal" value="'%'+keyword+'%'"/>
+	  </if>	
+	   <choose>
+	  	<when test="searchType=='all'.toString()">   
+	  		and upper(sname) Like  '%' || upper(#{keyword}) || '%' 
+	  		or upper(singername) Like  '%' || upper(#{keyword}) || '%' 
+	  		or upper(stitle) Like  '%' || upper(#{keyword}) || '%' 
+	  		or lyrics Like  '%' || #{keyword} || '%' 
+	  		or  genre Like  '%' || #{keyword} || '%')
+	  	</when>
+	  	<otherwise>)</otherwise> 
+	  </choose>
+	</sql>
+	
+	
+	<sql id="search2">
+	  	<bind name="keyVal" value="'%'+keyword+'%'"/>
+	  <choose>
+	  	<when test="searchType=='all'.toString()">   
+	  		and upper(sname) Like upper(#{keyVal}))
+	  	</when>
+	  	<otherwise>)</otherwise> 
+	  </choose> 
+	</sql>
+	
+	<sql id="search3">
+	  	<bind name="keyVal" value="'%'+keyword+'%'"/>
+	  <choose>
+	  	<when test="searchType=='all'.toString()">   
+	  		and upper(singername) Like upper(#{keyVal}))
+	  	</when>
+	  	<otherwise>)</otherwise> 
+	  </choose> 
+	</sql>
+	
+	<sql id="search4">
+	  	<bind name="keyVal" value="'%'+keyword+'%'"/>
+	  <choose>
+	  	<when test="searchType=='all'.toString()">   
+	  		and upper(lyrics) Like upper(#{keyVal}))
+	  	</when>
+	  	<otherwise>)</otherwise> 
+	  </choose> 
+	</sql>
+	
+	
+	 <select id="searchSnameList" resultType="vo.MusicVO">
+	 <if test="searchType=='all'.toString()">
+	 <![CDATA[
+	 select snum,image,sname,singername,stitle,downloadfile,genre,count,rnum from
+	 (select m.* , ROW_NUMBER() OVER(order by count desc) rnum from (select snum,image,replace(sname,' ','') sname,singername,stitle,downloadfile,genre,count,
+	  lyrics from music) m 
+	   where snum > 0 ]]>
+	  <include refid="search2"></include>
+	  where rnum between #{sno} and #{eno}
+	</if>
+	</select>
+	
+	
+	 <select id="searchSingerNameList" resultType="vo.MusicVO">
+	 <if test="searchType=='all'.toString()">
+	 <![CDATA[
+	 select snum,image,sname,singername,stitle,downloadfile,genre,count,rnum from
+	 (select m.* , ROW_NUMBER() OVER(order by count desc) rnum from (select snum,image,sname,replace(singername,' ','') singername,stitle,downloadfile,genre,count,
+	   lyrics from music) m 
+	   where snum > 0 ]]>
+	  <include refid="search3"></include>
+	  where rnum between #{sno} and #{eno}
+	</if>
+	</select>
+	
+	<select id="searchLyricsList" resultType="vo.MusicVO">
+	 <if test="searchType=='all'.toString()">
+	 <![CDATA[
+	 select snum,image,sname,singername,stitle,downloadfile,genre,lyrics,count,rnum from
+	 (select m.* , ROW_NUMBER() OVER(order by count desc) rnum from (select snum,image,sname,singername,stitle,downloadfile,genre,count,
+	  replace(lyrics,' ','') lyrics from music) m where snum > 0 ]]>
+	  <include refid="search4"></include>
+	  where rnum between #{sno} and #{eno}
+	</if>
+	</select>
+	
+	<select id="searchRowCountSname" resultType="int">
+	<![CDATA[ 	
+		select count(*) from music where ( snum > 0 ]]>
+		<!-- 조건 id : search -->
+		<include refid="search2"></include>  
+	</select>			
+	
+	<select id="searchRowCountSingerName" resultType="int">
+	<![CDATA[ 	
+		select count(*) from music where ( snum > 0 ]]>
+		<!-- 조건 id : search -->
+		<include refid="search3"></include>  
+	</select>	
+	
+	<select id="searchRowCountLyrics" resultType="int">
+	<![CDATA[ 	
+		select count(*) from music where ( snum > 0 ]]>
+		<!-- 조건 id : search -->
+		<include refid="search4"></include>  
+	</select>
 
 </mapper>  

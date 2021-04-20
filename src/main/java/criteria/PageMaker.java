@@ -17,7 +17,7 @@ private int lastPageNo;
 // 출력 가능한 마지막 PageNo (totalRow, rowPerPage 로 계산)
 
 //private Criteria cri; //ver01
-private Criteria cri; //ver02  -> 이거 private였는데 쓸려고 public으로 바꿔줌
+private Criteria cri; //ver02
 
 // 1) 필요한 값 set 
 //public void setCri(Criteria cri) { //ver01
@@ -123,19 +123,5 @@ public String toString() {
 			+ "]";
 }
 
-public void setTotalRowSname(int totalRow) {
-	   this.totalRow=totalRow;
-	   calcData();
-}
-
-public void setTotalRowSingerName(int totalRow) {
-	   this.totalRow=totalRow;
-	   calcData();
-}
-
-public void setTotalRowLyrics(int totalRow) {
-	   this.totalRow=totalRow;
-	   calcData();
-}
 
 }//class

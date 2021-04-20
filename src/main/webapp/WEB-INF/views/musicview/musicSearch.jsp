@@ -334,7 +334,6 @@ $(function(){
 </script>
 
 
-
 </head>
 <body>
 
@@ -370,9 +369,9 @@ $(function(){
       <ul>
          <li><a href="home">메인 페이지</a>
          <li><a href="javascript:;" onClick="location.reload()" style="color: #0b3f9a; font-size: 25px;">통합 검색</a>
-         <li ><a href="searchSname?${pageMaker.cri.keyword}">곡 검색</a>
-         <li><a href="searchSingerName?${pageMaker.cri.keyword}">아티스트 검색</a>
-         <li><a href="searchLyrics?${pageMaker.cri.keyword}">가사 검색</a>
+         <li ><a href="searchSname?keyword=${pageMaker.cri.keyword}&searchType=all">곡 검색</a>
+         <li><a href="searchSingerName?keyword=${pageMaker.cri.keyword}&searchType=all">아티스트 검색</a>
+         <li><a href="searchLyrics?keyword=${pageMaker.cri.keyword}&searchType=all">가사 검색</a>
       </ul>
    </nav>
    <br>
@@ -385,14 +384,14 @@ $(function(){
             <select name="searchType" id="searchType" style="display: none">
                <option value="all" <c:out value="${pageMaker.cri.searchType=='snm/sgr/tt/ly/gne' ? 'selected' : ''}" />>All</option>
             </select>
-            <input type="text" name="keyword" id="keyword" maxlength="35" size="50" style="vertical-align: middle;" value="${pageMaker.cri.keyword}">
+            <input type="text" name="keyword" id="keyword" maxlength="35" size="50" style="vertical-align: middle;" value="${UserKeyword}">
             <button type="button" id="searchBtn" style="vertical-align: middle;">Search</button>
          </form>
       </div>
    </div>
 
    <form id="musicSearch" name="musicSearch" align="center">
-      <h3 align="left">'${pageMaker.cri.keyword}'에 대한 검색 결과입니다.</h3>
+      <h3 align="left">'${UserKeyword}'에 대한 검색 결과입니다.</h3>
 
       <!-- 곡검색 -->
       <h1>곡 검색 결과 (${Banana2})</h1>
@@ -434,7 +433,7 @@ $(function(){
          <h2>곡 검색한 결과가 없습니다.</h2>
       </c:if>
       <div id="totalSearch">
-         <a href="searchsname">곡명으로 검색 전체보기></a>
+         <a href="searchSname?keyword=${UserKeyword}&searchType=all">곡명으로 검색 전체보기></a>
       </div>
 
       <!-- 아티스트명 검색 -->
@@ -478,7 +477,7 @@ $(function(){
          <h2>아티스트로 검색한 결과가 없습니다.</h2>
       </c:if>
       <div id="totalSearch">
-         <a href="searchSingerName">아트스트명으로 검색 전체보기></a>
+         <a href="searchSingerName?keyword=${UserKeyword}&searchType=all">아티스트명으로 검색 전체보기></a>
       </div>
       <!--------------------------------------------------아티스트 검색 end----------------------------------------------------- -->
       <!-- 가사검색 -->
@@ -522,7 +521,7 @@ $(function(){
          <h2>가사로 검색한 결과가 없습니다.</h2>
       </c:if>
       <div id="totalSearch">
-         <a href="searchLyrics">가사명으로 검색 전체보기></a>
+         <a href="searchLyrics?keyword=${UserKeyword}&searchType=all">가사명으로 검색 전체보기></a>
       </div>
    </form>
    <br>

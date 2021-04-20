@@ -4,8 +4,6 @@ import java.util.List;
 
 import criteria.Criteria;
 import vo.BoardVO;
-import vo.FaqVO;
-import vo.PageVO;
 
 public interface BoardService {
 	// Criteria
@@ -25,21 +23,4 @@ public interface BoardService {
 
 	public int replyInsert(BoardVO vo);// 답글등록
 
-	// ** SearchCriteria PageList
-	/*
-	 * public int searchRowCountF(SearchCriteria cri);
-	 * 
-	 * public List<FaqVO> searchFList(SearchCriteria cri);
-	 */
-
-// ** Criteria PageList
-	public int totalRowCount();
-
-	//public List<FaqVO> criFList(Criteria cri);
-
-// ** Page BoardList
-	public PageVO<FaqVO> pageList(PageVO<FaqVO> vo);
-
-// ** Check BoardList
-	public List<FaqVO> checkselectList(FaqVO vo);
-}// interface
+}

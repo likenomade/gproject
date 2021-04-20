@@ -8,7 +8,6 @@ import org.springframework.stereotype.Repository;
 
 import criteria.Criteria;
 import vo.FaqVO;
-import vo.PageVO;
 
 @Repository
 public class FaqDAO {
@@ -36,9 +35,6 @@ public class FaqDAO {
 	public int totalRowCount() {
 		return sqlSession.selectOne(NS+"totalRowCount");
 	}  
-	public List<FaqVO> pageList(PageVO<FaqVO> vo) {
-		return sqlSession.selectList(NS+"pageList",vo);
-	}
 
 	// ** Check BoardList
 	public List<FaqVO> checkselectList(FaqVO vo) {

@@ -165,7 +165,7 @@ public class GmusicController {
 	// ** Image DownLoad
 	@RequestMapping(value = "/dnload")
 	public ModelAndView dnload(ModelAndView mv, @RequestParam("dnfile") String dnfile) {
-		dnfile = "C:/NamCheolWoo/gproject/src/main/webapp/" + dnfile;
+		dnfile = "C:/IDset/eclipse/gproject/src/main/webapp/" + dnfile;
 		System.out.println("** dnfile => " + dnfile);
 		File file = new File(dnfile);
 
@@ -191,85 +191,50 @@ public class GmusicController {
 	/*--------------------------------------------------검색--------------------------------------------*/
 	@RequestMapping(value = "/mSearch") // 통합검색
 	public ModelAndView mSearch(ModelAndView mv, Criteria cri, PageMaker pageMaker) {
-
-		/*
-		 * System.out.println(cri.getKeyword()); System.out.println("첫번쨰");
-		 */
-		cri.setRowPerPage(10);
+		System.out.println("들어오는 서치타입은? ********* >>>" + cri.getSearchType());
+		System.out.println("들어오는 키워드은? ********* >>>" + cri.getKeyword());
 		cri.setSnoEno();
 
+		mv.addObject("searchType", cri.getSearchType());
 		mv.addObject("UserKeyword", cri.getKeyword());
 		cri.setKeyword(cri.getKeyword().replace(" ", ""));
 
-		mv.addObject("Banana", service.searchSnameList(cri));
-		mv.addObject("Carot", service.searchSingerNameList(cri));
-		mv.addObject("Durian", service.searchLyricsList(cri));
+		if ("all".equals(cri.getSearchType())) {
 
-		pageMaker.setCri(cri);
+			cri.setSearchType("sname");
+			List<MusicVO> list1 = service.searchSnameList(cri);
+			mv.addObject("Aanana", list1);
+			mv.addObject("Aanana2", service.searchRowCountSname(cri));
 
-		mv.addObject("Banana2", service.searchRowCountSname(cri));
-		mv.addObject("Carot2", service.searchRowCountSingerName(cri));
-		mv.addObject("Durian2", service.searchRowCountLyrics(cri));
+			cri.setSearchType("singername");
+			List<MusicVO> list2 = service.searchSnameList(cri);
+			mv.addObject("Banana", list2);
+			mv.addObject("Banana2", service.searchRowCountSname(cri));
 
-		mv.addObject("pageMaker", pageMaker);
+			cri.setSearchType("lyrics");
+			List<MusicVO> list3 = service.searchSnameList(cri);
+			mv.addObject("Canana", list3);
+			mv.addObject("Canana2", service.searchRowCountSname(cri));
+			cri.setSearchType("all");
+		}
 
-		mv.setViewName("musicview/musicSearch");
-		return mv;
-	} // mSearch
-
-	@RequestMapping(value = "/searchSname") // 곡 검색
-	public ModelAndView searchSname(ModelAndView mv, Criteria cri, PageMaker pageMaker) {
-
-		cri.setSnoEno();
-		
-		mv.addObject("UserKeyword", cri.getKeyword());
-		cri.setKeyword(cri.getKeyword().replace(" ", ""));
-		mv.addObject("Banana", service.searchSnameList(cri));
+		mv.addObject("Apple", service.searchSnameList(cri));
+		mv.addObject("Apple2", service.searchRowCountSname(cri));
 
 		pageMaker.setCri(cri);
 		pageMaker.setTotalRow(service.searchRowCountSname(cri));
 
 		mv.addObject("pageMaker", pageMaker);
-		mv.setViewName("musicview/SearchSname");
+
+		if ("all".equals(cri.getSearchType())) {
+			mv.setViewName("musicview/musicSearch");
+		} else {
+			mv.setViewName("musicview/searchDetail");
+		}
 
 		return mv;
-	} // searchSname
+	} // mSearch
 
-	@RequestMapping(value = "/searchSingerName") // 가수 검색
-	public ModelAndView searchSingerName(ModelAndView mv, Criteria cri, PageMaker pageMaker) {
-
-		cri.setSnoEno();
-
-		mv.addObject("UserKeyword", cri.getKeyword());
-		cri.setKeyword(cri.getKeyword().replace(" ", ""));
-		mv.addObject("Carot", service.searchSingerNameList(cri));
-
-		pageMaker.setCri(cri);
-		pageMaker.setTotalRow(service.searchRowCountSingerName(cri));
-		mv.addObject("pageMaker", pageMaker);
-
-		mv.setViewName("musicview/SearchSingerName");
-
-		return mv;
-	} // searchSingerName
-
-	@RequestMapping(value = "/searchLyrics") // 가사 검색
-	public ModelAndView searchLyrics(ModelAndView mv, Criteria cri, PageMaker pageMaker) {
-
-		cri.setSnoEno();
-		
-		mv.addObject("UserKeyword", cri.getKeyword());
-		cri.setKeyword(cri.getKeyword().replace(" ", ""));
-		mv.addObject("Durian", service.searchLyricsList(cri));
-
-		pageMaker.setCri(cri);
-		pageMaker.setTotalRow(service.searchRowCountLyrics(cri));
-		mv.addObject("pageMaker", pageMaker);
-
-		mv.setViewName("musicview/SearchLyrics");
-
-		return mv;
-	} // searchLyrics
 	/*------------------------------------------------------------------------------------------*/
 
 }

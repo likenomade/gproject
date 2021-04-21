@@ -285,7 +285,7 @@ footer {
    // https://hianna.tistory.com/430 참고
    function getCheckboxValue()  {
       // 선택된 목록 가져오기
-      const query = 'input[name="snum"]:checked'; //snum_1  ,snumVal_1 로 바꾸고 해도 안되네;;
+      const query = 'input[name="snum"]:checked';
       const selectedEls = document.querySelectorAll(query);
    
       // 선택된 목록에서 value 찾기
@@ -293,10 +293,6 @@ footer {
       selectedEls.forEach((el) => {
       result += el.value + ',';
       });
-      
-      // div에 출력 하기
-      document.getElementById('result').innerText
-      = result;
       
       url = "playlist";
       window.open(url, "myview",
@@ -369,9 +365,9 @@ $(function(){
       <ul>
          <li><a href="home">메인 페이지</a>
          <li><a href="javascript:;" onClick="location.reload()" style="color: #0b3f9a; font-size: 25px;">통합 검색</a>
-         <li ><a href="searchSname?keyword=${pageMaker.cri.keyword}&searchType=all">곡 검색</a>
-         <li><a href="searchSingerName?keyword=${pageMaker.cri.keyword}&searchType=all">아티스트 검색</a>
-         <li><a href="searchLyrics?keyword=${pageMaker.cri.keyword}&searchType=all">가사 검색</a>
+         <li ><a href="mSearch?keyword=${UserKeyword}&searchType=sname">곡 검색</a>
+         <li><a href="mSearch?keyword=${UserKeyword}&searchType=singername">아티스트 검색</a>
+         <li><a href="mSearch?keyword=${UserKeyword}&searchType=lyrics">가사 검색</a>
       </ul>
    </nav>
    <br>
@@ -382,7 +378,7 @@ $(function(){
          <form action="mSearch" id="search" name="search" class="search">
 
             <select name="searchType" id="searchType" style="display: none">
-               <option value="all" <c:out value="${pageMaker.cri.searchType=='snm/sgr/tt/ly/gne' ? 'selected' : ''}" />>All</option>
+               <option value="all" selected>All</option>
             </select>
             <input type="text" name="keyword" id="keyword" maxlength="35" size="50" style="vertical-align: middle;" value="${UserKeyword}">
             <button type="button" id="searchBtn" style="vertical-align: middle;">Search</button>
@@ -392,9 +388,9 @@ $(function(){
 
    <form id="musicSearch" name="musicSearch" align="center">
       <h3 align="left">'${UserKeyword}'에 대한 검색 결과입니다.</h3>
-
+		<div id="snameSearchAjax">
       <!-- 곡검색 -->
-      <h1>곡 검색 결과 (${Banana2})</h1>
+      <h1>곡 검색 결과 (${Aanana2})</h1>
       <button type="button" onclick="getCheckboxValue()">플레이리스트</button>
       <input type="hidden" id="snumVal" name="snumVal" value="">
       <table style="width: 100%;" border="1">
@@ -409,7 +405,7 @@ $(function(){
             <td>앨범명</td>
             <td>downloadfile</td>
          </tr>
-         <c:forEach var="row" items="${Banana}" varStatus="vs">
+         <c:forEach var="row" items="${Aanana}" varStatus="vs">
             <tr>
                <td align="center">
                   <input type="checkbox" class="normalCheck_2" id="snum${row.snum}" name="snum" value="${row.snum}">
@@ -429,17 +425,18 @@ $(function(){
             </tr>
          </c:forEach>
       </table>
-      <c:if test="${empty Banana}">
-         <h2>곡 검색한 결과가 없습니다.</h2>
+      <c:if test="${empty Aanana}">
+         <h2>곡으로 검색한 결과가 없습니다.</h2>
       </c:if>
       <div id="totalSearch">
-         <a href="searchSname?keyword=${UserKeyword}&searchType=all">곡명으로 검색 전체보기></a>
+         <a href="mSearch?keyword=${UserKeyword}&searchType=sname">곡 검색 전체보기></a>
       </div>
 
+ 	</div>
+ 	<div id="singernameSearchAjax">
       <!-- 아티스트명 검색 -->
-      <h1>아티스트명으로 검색 결과 (${Carot2})</h1>
+      <h1>아티스트 검색 결과 (${Banana2})</h1>
       <button type="button" onclick="getCheckboxValue()">플레이리스트</button>
-      <div id='result'></div>
       <input type="hidden" id="snumVal" name="snumVal" value="">
       <table style="width: 100%;" border="1">
          <tr align="center" height="2" bgcolor="ghostwhite">
@@ -453,7 +450,7 @@ $(function(){
             <td>앨범명</td>
             <td>downloadfile</td>
          </tr>
-         <c:forEach var="row" items="${Carot}" varStatus="vs">
+         <c:forEach var="row" items="${Banana}" varStatus="vs">
             <tr>
                <td align="center">
                   <input type="checkbox" class="normalCheck_3" id="snum${row.snum}" name="snum" value="${row.snum}">
@@ -473,17 +470,18 @@ $(function(){
             </tr>
          </c:forEach>
       </table>
-      <c:if test="${empty Carot}">
+      <c:if test="${empty Banana}">
          <h2>아티스트로 검색한 결과가 없습니다.</h2>
       </c:if>
       <div id="totalSearch">
-         <a href="searchSingerName?keyword=${UserKeyword}&searchType=all">아티스트명으로 검색 전체보기></a>
+         <a href="mSearch?keyword=${UserKeyword}&searchType=singername">아티스트 검색 전체보기></a>
+      </div>
       </div>
       <!--------------------------------------------------아티스트 검색 end----------------------------------------------------- -->
       <!-- 가사검색 -->
-      <h1>가사 검색 결과 (${Durian2})</h1>
+      <div id="lyricsSearchAjax">
+      <h1>가사 검색 결과 (${Canana2})</h1>
       <button type="button" onclick="getCheckboxValue()">플레이리스트</button>
-      <div id='result'></div>
       <input type="hidden" id="snumVal" name="snumVal" value="">
       <table style="width: 100%;" border="1">
          <tr align="center" height="2" bgcolor="ghostwhite">
@@ -497,7 +495,7 @@ $(function(){
             <td>앨범명</td>
             <td>downloadfile</td>
          </tr>
-         <c:forEach var="row" items="${Durian}" varStatus="vs">
+         <c:forEach var="row" items="${Canana}" varStatus="vs">
             <tr>
                <td align="center">
                   <input type="checkbox" class="normalCheck_4" id="snum${row.snum}" name="snum" value="${row.snum}">
@@ -517,11 +515,12 @@ $(function(){
             </tr>
          </c:forEach>
       </table>
-      <c:if test="${empty Durian}">
+      <c:if test="${empty Canana}">
          <h2>가사로 검색한 결과가 없습니다.</h2>
       </c:if>
       <div id="totalSearch">
-         <a href="searchLyrics?keyword=${UserKeyword}&searchType=all">가사명으로 검색 전체보기></a>
+         <a href="mSearch?keyword=${UserKeyword}&searchType=lyrics">가사 검색 전체보기></a>
+      </div>
       </div>
    </form>
    <br>

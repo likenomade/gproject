@@ -113,7 +113,7 @@ public class MemberController {
 			file1 = realPath + uploadfilef.getOriginalFilename();
 			// 드라이브에 저장되는 실제 경로와 화일명
 			uploadfilef.transferTo(new File(file1)); // file 붙여넣기
-			file2 = "resources/Image/" + uploadfilef.getOriginalFilename();
+			file2 = "resources/uploadImage/" + uploadfilef.getOriginalFilename();
 		}
 		vo.setUploadfile(file2);
 		// *******************************************
@@ -310,7 +310,7 @@ public class MemberController {
 		if (realPath.contains(".eclipse.")) {
 			realPath="C:/IDset/eclipse/gproject/src/main/webapp/resources/uploadImage";
 		}else {
-			realPath +="resources\\Image\\";
+			realPath +="resources\\uploadImage\\";
 		}
 
 		MultipartFile uploadfilef = null;

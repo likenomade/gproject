@@ -57,90 +57,36 @@
 	<update id="musicCount"> <!-- count를 위한 sql -->
 		UPDATE music set count=#{count} WHERE snum=#{snum}
 	</update>
-	
-	<!-- 검색 및 페이징 부분 -->
-	<sql id="search1">
-	  <if test="keyword != null">
-	  	<bind name="keyVal" value="'%'+keyword+'%'"/>
-	  </if>	
-	   <choose>
-	  	<when test="searchType=='all'.toString()">   
-	  		and upper(sname) Like  '%' || upper(#{keyword}) || '%' 
-	  		or upper(singername) Like  '%' || upper(#{keyword}) || '%' 
-	  		or upper(stitle) Like  '%' || upper(#{keyword}) || '%' 
-	  		or lyrics Like  '%' || #{keyword} || '%' 
-	  		or  genre Like  '%' || #{keyword} || '%')
-	  	</when>
-	  	<otherwise>)</otherwise> 
-	  </choose>
-	</sql>
-	
-	
+	<!-- ////////////////////////////////////////////////////////// -->
 	<sql id="search2">
 	  	<bind name="keyVal" value="'%'+keyword+'%'"/>
 	  <choose>
 	  	<when test="searchType=='all'.toString()">   
+	  		and upper(sname) Like  '%' || upper(#{keyword}) || '%' 
+	  		or upper(singername) Like  '%' || upper(#{keyword}) || '%' 
+	  		or upper(lyrics) Like  '%' || upper(#{keyword}) || '%' )
+	  	</when>
+	  	<when test="searchType=='singername'.toString()">   
+	  		and upper(singername) Like upper(#{keyVal}))
+	  	</when>
+	  	<when test="searchType=='lyrics'.toString()">   
+	  		and upper(lyrics) Like upper(#{keyVal}))
+	  	</when>
+	  	<when test="searchType=='sname'.toString()">   
 	  		and upper(sname) Like upper(#{keyVal}))
 	  	</when>
 	  	<otherwise>)</otherwise> 
 	  </choose> 
 	</sql>
 	
-	<sql id="search3">
-	  	<bind name="keyVal" value="'%'+keyword+'%'"/>
-	  <choose>
-	  	<when test="searchType=='all'.toString()">   
-	  		and upper(singername) Like upper(#{keyVal}))
-	  	</when>
-	  	<otherwise>)</otherwise> 
-	  </choose> 
-	</sql>
-	
-	<sql id="search4">
-	  	<bind name="keyVal" value="'%'+keyword+'%'"/>
-	  <choose>
-	  	<when test="searchType=='all'.toString()">   
-	  		and upper(lyrics) Like upper(#{keyVal}))
-	  	</when>
-	  	<otherwise>)</otherwise> 
-	  </choose> 
-	</sql>
-	
-	
 	 <select id="searchSnameList" resultType="vo.MusicVO">
-	 <if test="searchType=='all'.toString()">
 	 <![CDATA[
-	 select snum,image,sname,singername,stitle,downloadfile,genre,count,rnum from
-	 (select m.* , ROW_NUMBER() OVER(order by count desc) rnum from (select snum,image,replace(sname,' ','') sname,singername,stitle,downloadfile,genre,count,
-	  lyrics from music) m 
+	 select snum,image,sname,singername,stitle,downloadfile,genre,rnum from
+	 (select m.* , ROW_NUMBER() OVER(order by count desc) rnum from (select snum, image, replace(sname,' ','') sname, replace(singername,' ','') singername, stitle, downloadfile, genre,
+	  replace(lyrics,' ','') lyrics,count from music) m 
 	   where snum > 0 ]]>
 	  <include refid="search2"></include>
 	  where rnum between #{sno} and #{eno}
-	</if>
-	</select>
-	
-	
-	 <select id="searchSingerNameList" resultType="vo.MusicVO">
-	 <if test="searchType=='all'.toString()">
-	 <![CDATA[
-	 select snum,image,sname,singername,stitle,downloadfile,genre,count,rnum from
-	 (select m.* , ROW_NUMBER() OVER(order by count desc) rnum from (select snum,image,sname,replace(singername,' ','') singername,stitle,downloadfile,genre,count,
-	   lyrics from music) m 
-	   where snum > 0 ]]>
-	  <include refid="search3"></include>
-	  where rnum between #{sno} and #{eno}
-	</if>
-	</select>
-	
-	<select id="searchLyricsList" resultType="vo.MusicVO">
-	 <if test="searchType=='all'.toString()">
-	 <![CDATA[
-	 select snum,image,sname,singername,stitle,downloadfile,genre,lyrics,count,rnum from
-	 (select m.* , ROW_NUMBER() OVER(order by count desc) rnum from (select snum,image,sname,singername,stitle,downloadfile,genre,count,
-	  replace(lyrics,' ','') lyrics from music) m where snum > 0 ]]>
-	  <include refid="search4"></include>
-	  where rnum between #{sno} and #{eno}
-	</if>
 	</select>
 	
 	<select id="searchRowCountSname" resultType="int">
@@ -149,19 +95,5 @@
 		<!-- 조건 id : search -->
 		<include refid="search2"></include>  
 	</select>			
-	
-	<select id="searchRowCountSingerName" resultType="int">
-	<![CDATA[ 	
-		select count(*) from music where ( snum > 0 ]]>
-		<!-- 조건 id : search -->
-		<include refid="search3"></include>  
-	</select>	
-	
-	<select id="searchRowCountLyrics" resultType="int">
-	<![CDATA[ 	
-		select count(*) from music where ( snum > 0 ]]>
-		<!-- 조건 id : search -->
-		<include refid="search4"></include>  
-	</select>
 
 </mapper>  

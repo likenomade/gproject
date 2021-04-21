@@ -58,35 +58,22 @@ public class MusicServiceimpl implements MusicService {
 		return dao.searchRowCountSname(cri);
 	}
 
-	public int searchRowCountSingerName(Criteria cri) {
-		return dao.searchRowCountSingerName(cri);
-	}
 
-	public int searchRowCountLyrics(Criteria cri) {
-		return dao.searchRowCountLyrics(cri);
-	}
 
 	public List<MusicVO> searchSnameList(Criteria cri) {
 		return dao.searchSnameList(cri);
 	}
 
-	public List<MusicVO> searchSingerNameList(Criteria cri) {
-		return dao.searchSingerNameList(cri);
-	}
 
-	public List<MusicVO> searchLyricsList(Criteria cri) {
-		return dao.searchLyricsList(cri);
-	}
-
-	public List<MusicVO> criSnameList(Criteria cri) {
-		return dao.criSnameList(cri);
-	}
-
-	public List<MusicVO> criSingerNameList(Criteria cri) {
-		return dao.criSingerNameList(cri);
-	}
-
-	public List<MusicVO> criLyricsList(Criteria cri) {
-		return dao.criLyricsList(cri);
-	}
+//	public List<MusicVO> criSnameList(Criteria cri) {
+//		return dao.criSnameList(cri);
+//	}
+//
+//	public List<MusicVO> criSingerNameList(Criteria cri) {
+//		return dao.criSingerNameList(cri);
+//	}
+//
+//	public List<MusicVO> criLyricsList(Criteria cri) {
+//		return dao.criLyricsList(cri);
+//	}
 }

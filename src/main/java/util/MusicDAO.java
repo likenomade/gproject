@@ -64,36 +64,21 @@ public class MusicDAO {
 		return sqlSession.selectOne(NS + "searchRowCountSname", cri);
 	}
 
-	public int searchRowCountSingerName(Criteria cri) {
-		return sqlSession.selectOne(NS + "searchRowCountSingerName", cri);
-	}
-
-	public int searchRowCountLyrics(Criteria cri) {
-		return sqlSession.selectOne(NS + "searchRowCountLyrics", cri);
-	}
 
 	public List<MusicVO> searchSnameList(Criteria cri) {
 		return sqlSession.selectList(NS + "searchSnameList", cri);
 	}
 
-	public List<MusicVO> searchSingerNameList(Criteria cri) {
-		return sqlSession.selectList(NS + "searchSingerNameList", cri);
-	}
-
-	public List<MusicVO> searchLyricsList(Criteria cri) {
-		return sqlSession.selectList(NS + "searchLyricsList", cri);
-	}
-
-	// ** Criteria PageList
-	public List<MusicVO> criSnameList(Criteria cri) {
-		return sqlSession.selectList(NS + "pageSnameList", cri);
-	}
-
-	public List<MusicVO> criSingerNameList(Criteria cri) {
-		return sqlSession.selectList(NS + "pageSnameList", cri);
-	}
-
-	public List<MusicVO> criLyricsList(Criteria cri) {
-		return sqlSession.selectList(NS + "pageSnameList", cri);
-	}
+//	// ** Criteria PageList
+//	public List<MusicVO> criSnameList(Criteria cri) {
+//		return sqlSession.selectList(NS + "pageSnameList", cri);
+//	}
+//
+//	public List<MusicVO> criSingerNameList(Criteria cri) {
+//		return sqlSession.selectList(NS + "pageSnameList", cri);
+//	}
+//
+//	public List<MusicVO> criLyricsList(Criteria cri) {
+//		return sqlSession.selectList(NS + "pageSnameList", cri);
+//	}
 } // class

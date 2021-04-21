@@ -29,21 +29,15 @@ public interface MusicService {
 	// ** SearchCriteria PageList
 	public int searchRowCountSname(Criteria cri);
 
-	public int searchRowCountSingerName(Criteria cri);
 
-	public int searchRowCountLyrics(Criteria cri);
 
-	// ** Criteria PageList
+//	// ** Criteria PageList
 	public List<MusicVO> searchSnameList(Criteria cri);
+//
+//	public List<MusicVO> searchSingerNameList(Criteria cri);
+//
+//	public List<MusicVO> searchLyricsList(Criteria cri);
 
-	public List<MusicVO> searchSingerNameList(Criteria cri);
 
-	public List<MusicVO> searchLyricsList(Criteria cri);
-
-	public List<MusicVO> criSnameList(Criteria cri);
-
-	public List<MusicVO> criSingerNameList(Criteria cri);
-
-	public List<MusicVO> criLyricsList(Criteria cri);
 
 }// interface

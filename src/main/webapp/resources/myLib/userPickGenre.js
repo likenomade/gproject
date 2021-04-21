@@ -9,7 +9,7 @@ $(function(){
 			type:'Get',
 			url:'genrelist',
 			data: {
-				genre : 'ballad', /*홈의 선호장르 리스트 디폴트 장르*/
+				genre : 'dance', /*홈의 선호장르 리스트 디폴트 장르*/
 				pagingCode : 'section1_1'
 			},
 			success:function(resultPage){

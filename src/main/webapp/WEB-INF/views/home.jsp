@@ -309,7 +309,7 @@ a {
 			<form action="mSearch" id="search" name="search" class="search">
 
 				<select name="searchType" id="searchType" style="display: none">
-					<option value="all" <c:out value="${pageMaker.cri.searchType=='all' ? 'selected' :''}"/>>All</option>
+					<option value="all" selected>All</option>
 				</select>
 				<input type="text" name="keyword" id="keyword" maxlength="35" size="50" style="vertical-align: middle;" value="${pageMaker.cri.keyword}">
 				<button type="button" id="searchBtn" style="vertical-align: middle;">Search</button>

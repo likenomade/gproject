@@ -216,10 +216,12 @@ public class GmusicController {
 			mv.addObject("Canana", list3);
 			mv.addObject("Canana2", service.searchRowCountSname(cri));
 			cri.setSearchType("all");
+		
+		}else {
+			mv.addObject("Apple", service.searchSnameList(cri));
+			mv.addObject("Apple2", service.searchRowCountSname(cri));
 		}
 
-		mv.addObject("Apple", service.searchSnameList(cri));
-		mv.addObject("Apple2", service.searchRowCountSname(cri));
 
 		pageMaker.setCri(cri);
 		pageMaker.setTotalRow(service.searchRowCountSname(cri));

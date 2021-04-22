@@ -130,6 +130,8 @@ public class GmusicController {
 		List<MusicVO> list = new ArrayList<MusicVO>();
 		for (int i = 0; i < intsnumVal.length; i++) {
 			vo.setSnum(intsnumVal[i]);
+			vo=service.selectOne(vo);
+			vo.setLyrics(vo.getLyrics().replace("\"", "&quot"));
 			list.add(service.selectOne(vo));
 
 		}

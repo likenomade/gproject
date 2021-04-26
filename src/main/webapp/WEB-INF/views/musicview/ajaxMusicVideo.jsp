@@ -3,39 +3,25 @@
 <html>
 <head>
 <title>Gmusic</title>
-<script src="resources/myLib/pagingSec1_2.js"></script>
+<script src="resources/myLib/pagingSec1_3.js"></script>
 <script>
 $(function() {//ready
-	$(".albumimageButton").click(function() {
+	$(".albumimageButton3").click(function() {
 		
-		var buttonSnumVal = $(this).attr('value')+',';
+		var buttonSnumVal = $(this).attr('value');
 
-		url = "playlist";
-		window.open(url, "playlistView","toolbar=no,menubar=yes,scrollbars=no,resizable=no,width=340,height=720");
-		$('.musiclistForm').attr('action',url);
-		$('.musiclistForm').attr('method',"post");
-		$('.musiclistForm').attr('target',"playlistView");
+		url = buttonSnumVal+"?amp;autoplay=1";
+		window.open(url, "videoView","toolbar=no,location=no,status=no,scrollbars=no,resizable=no,width=600,height=400");
 
-		// 항목 추가
-		var addsnumVal = $('input[name=snumVal]').val();
-		console.log('addsnumVal => ' + addsnumVal);
-		if (addsnumVal != null) {
-		   $('input[name=snumVal]').attr('value',addsnumVal+buttonSnumVal);
-		}else{
-			$('input[name=snumVal]').attr('value',buttonSnumVal);
-		}
-		
-		$('.musiclistForm').submit(); 
-		
 	});
 });//ready
 </script>
 </head>
 <body>
-	<div id="section1_2">
+	<div id="section1_3">
 		<div>
 			<a href="musiclist">
-				<span class="subheading">&nbsp;최신음악 &gt;</span>
+				<span class="subheading">&nbsp;최신 뮤직비디오 &gt;</span>
 			</a>
 		</div>
 		<form class="musiclistForm" name="musiclistForm">
@@ -44,7 +30,7 @@ $(function() {//ready
 		<div class="gallerylist">
 			<ul>
 				<c:forEach var="row" items="${Banana}" varStatus="vs">
-					<li><a href="javascript:;" class="albumimageButton" value="${row.snum}">
+					<li><a href="javascript:;" class="albumimageButton3" value="${row.musicurl}">
 							<div class="screen">
 								<div class="top">${row.sname}</div>
 								<div class="bottom">${row.singername}</div>
@@ -64,9 +50,9 @@ $(function() {//ready
 		<!-- ver 02 : pageMaker.searchQuery(?) -->
 		<!-- 1) First << , Prev < : enabeld 여부 -->
 		<c:if test="${pageMaker.prev && pageMaker.sPageNo>1}">
-			<a href="javascript:;" class="pagingAjax2" value1="musiclist${pageMaker.makeQuery(1)}&pagingCode=section1_2">&#8666;</a>&nbsp; <!-- First -->
+			<a href="javascript:;" class="pagingAjax3" value1="musiclist${pageMaker.makeQuery(1)}&pagingCode=section1_3">&#8666;</a>&nbsp; <!-- First -->
 			<!-- "qna?currPage=1" -->
-			<a href="javascript:;" class="pagingAjax2" value1="musiclist${pageMaker.makeQuery(pageMaker.sPageNo-1)}&pagingCode=section1_2">&#8636;</a>
+			<a href="javascript:;" class="pagingAjax3" value1="musiclist${pageMaker.makeQuery(pageMaker.sPageNo-1)}&pagingCode=section1_3">&#8636;</a>
 			<!-- Prev -->
 		</c:if>
 
@@ -76,7 +62,7 @@ $(function() {//ready
 				<font style="font-weight: bold;" color="navy">${i}&nbsp;</font>
 			</c:if>
 			<c:if test="${i!=pageMaker.cri.currPage}">
-				<a href="javascript:;" class="pagingAjax2" value1="musiclist${pageMaker.makeQuery(i)}&pagingCode=section1_2">${i}</a>&nbsp;
+				<a href="javascript:;" class="pagingAjax3" value1="musiclist${pageMaker.makeQuery(i)}&pagingCode=section1_3">${i}</a>&nbsp;
 		</c:if>
 
 			<!-- 삼항식과 비교 
@@ -86,8 +72,8 @@ $(function() {//ready
 
 		<!-- 3) Next > , Last >> : enabled 여부 -->
 		<c:if test="${pageMaker.next && pageMaker.ePageNo>0}">
-			<a href="javascript:;" class="pagingAjax2" value1="musiclist${pageMaker.makeQuery(pageMaker.ePageNo+1)}&pagingCode=section1_2">&nbsp;&nbsp;&#8640;</a>&nbsp; <!-- Next -->
-			<a href="javascript:;" class="pagingAjax2" value1="musiclist${pageMaker.makeQuery(pageMaker.lastPageNo)}&genre=${musicGenre}&pagingCode=section1_2">&#8667;</a>&nbsp;&nbsp; <!-- Last -->
+			<a href="javascript:;" class="pagingAjax3" value1="musiclist${pageMaker.makeQuery(pageMaker.ePageNo+1)}&pagingCode=section1_3">&nbsp;&nbsp;&#8640;</a>&nbsp; <!-- Next -->
+			<a href="javascript:;" class="pagingAjax3" value1="musiclist${pageMaker.makeQuery(pageMaker.lastPageNo)}&genre=${musicGenre}&pagingCode=section1_3">&#8667;</a>&nbsp;&nbsp; <!-- Last -->
 
 		</c:if>
 	</div>

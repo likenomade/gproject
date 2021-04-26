@@ -202,6 +202,7 @@ body {
 
 		document.title = $("#playlist option:selected").attr('value') + " - "
 				+ $("#playlist option:selected").attr('value2'); // 현재 곡에 따라 타이틀 변경
+
 		$("#sname").html($("#playlist option:selected").attr('value'));
 		$("#singername").html($("#playlist option:selected").attr('value2'));
 		$("#albumimage").attr("src",
@@ -209,8 +210,8 @@ body {
 		$("#audioplay").attr("src",
 				$("#playlist option:selected").attr('value4'));
 
-		if ($('.hiddenLyrics').val() != "") {
-			$("#lyrics").html($('.hiddenLyrics').val());
+		if ($("#playlist option:selected").attr('value5') != "") {
+			$("#lyrics").html($("#playlist option:selected").attr('value5'));
 		} else {
 			$("#lyrics").html("가사가 없습니다");
 		}
@@ -229,10 +230,10 @@ body {
 				snum : snumber
 			},
 			success : function() {
-				console.log("성공");
+				console.log("카운트 성공");
 			},
 			error : function() {
-				console.log("실패");
+				console.log("카운트 실패");
 			}
 		});//count를 위한 값 넘기기 
 
@@ -331,6 +332,57 @@ body {
 
 	} //viewLyrics
 
+	function removeAjax() { // new삭제
+
+		var index = $("#playlist option").index($("#playlist option:selected"));
+		console.log('index 확인 => ' + index);
+		var snumValSession = '${snumValSession}';
+		var snumValsplit = snumValSession.split(',');
+		//var selectedSnum = $("#playlist option:eq(" + index + ")").attr('value6');
+		var selectedSnum = $("#playlist option:selected").attr('value6');
+		var snumVal = '';
+		console.log('snumValSession 확인 => ' + snumValSession);
+		console.log('selectedSnum 확인 => ' + selectedSnum);
+		console.log('snumValsplit.length 확인 => ' + snumValsplit.length);
+
+		console.log('snumValsplit[index] 확인 => ' + snumValsplit[index]);
+		snumValsplit[index] = '';
+
+		for (var i = 0; i < snumValsplit.length - 1; i++) {
+			console.log('snumValsplit' + i + ' 확인 => ' + snumValsplit[i]);
+			//if (snumValsplit[i] == selectedSnum) {
+			//	snumValsplit[i] = '';
+			//}
+			console.log('snumValsplit' + i + ' 변환후 확인 => ' + snumValsplit[i]);
+			if (snumValsplit[i] != '') {
+				snumVal += snumValsplit[i] + ',';
+			}
+		}
+		console.log("snumVal 확인 => " + snumVal);
+
+		//url = 'playlist?snumVal=' + snumVal;
+		//window.open(url, "playlistView","toolbar=no,menubar=yes,scrollbars=no,resizable=no,width=340,height=720");
+
+		location.href = 'playlist?snumVal=' + snumVal;
+		opener.document.getElementById("snumVal").value = snumVal;
+
+		//삭제를 위한 값 넘기기 
+		/* $.ajax({
+			type : 'post',
+			url : 'playlist?snumVal=' + snumVal,
+			success : function() {
+				console.log("삭제 성공");
+				/* $('.content').html('');
+				$('.content').html(resultPage);
+				window.onload = autoplay(); */
+		/* },
+		error : function() {
+			console.log("삭제 실패");
+		}
+		}); */
+
+	} //removeAjax
+
 	// selectbox 위아래 이동하게 구현하기
 	// https://zzznara2.tistory.com/457 그대로 가져옴
 	// 테스트
@@ -379,6 +431,11 @@ body {
 		}
 	}
 </script>
+<c:if test="${message!=null}">
+	<script>
+		alert('${message}');
+	</script>
+</c:if>
 </head>
 <body onload="autoplay()">
 	<div class="layer">
@@ -386,17 +443,17 @@ body {
 			<table id="playlistTable">
 				<tr>
 					<td>
-						<div id="sname"></div>
+						<div id="sname">재생 목록이 없습니다</div>
 					</td>
 				</tr>
 				<tr>
 					<td>
-						<div id="singername"></div>
+						<div id="singername">듣고 싶은 곡을 선택해 보세요!</div>
 					</td>
 				</tr>
 				<tr>
 					<td>
-						<img src="" id="albumimage" width="200" height="200" />
+						<img src="resources/image/f1f3f4.png" id="albumimage" width="200" height="200" />
 					</td>
 				</tr>
 				<tr>
@@ -404,6 +461,7 @@ body {
 						<button type="button" id="previous" class="buttonLine1" onclick="previous()">|◁</button>
 						<button type="button" id="playpause" class="buttonLine1" onclick="playpause()">❚❚</button>
 						<button type="button" id="next" class="buttonLine1" onclick="next()">▷|</button>
+						<button type="button" class="buttonLine2" onClick="removeAjax()">삭제2</button>
 					</td>
 				</tr>
 				<tr>
@@ -428,18 +486,10 @@ body {
 				<tr>
 					<td>
 						<select id="playlist" name="playlist" size="15" style="width: 300px; height: 300px;" ondblclick="nowplay()">
-							<c:forEach var="row" items="${Banana}">
+							<c:forEach var="row" items="${Banana}" varStatus="vs">
 								<option value="${row.sname}" value2="${row.singername}" value3="${row.image}" value4="${row.downloadfile}" value5="${row.lyrics}" value6="${row.snum}">${row.sname}</option>
 							</c:forEach>
 						</select>
-							<c:forEach var="row" items="${Banana}">
-							<textarea class="hiddenLyrics" style="display: none;">${row.lyrics}</textarea>
-							</c:forEach>
-						<%-- <div id="playlist" name="playlist" style="width: 300px; height: 300px;" ondblclick="nowplay()">
-						<c:forEach var="row" items="${Banana}">
-						<input type="checkbox" value="${row.sname}" value2="${row.singername}" value3="${row.image}" value4="${row.downloadfile}" value5="${row.lyrics}" value6="${row.snum}">
-						</c:forEach>
-						</div> --%>
 						<textarea id="lyrics" readonly="readonly" style="display: none;"></textarea>
 					</td>
 				</tr>

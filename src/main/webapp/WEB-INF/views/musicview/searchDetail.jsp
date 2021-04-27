@@ -151,6 +151,8 @@ footer {
 /*footer---------------------------- */
 /* 반응형 미디어 쿼리 */
 @media ( max-width :650px) {
+
+
 }
 </style>
 <script>

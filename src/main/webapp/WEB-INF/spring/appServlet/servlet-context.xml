@@ -60,8 +60,8 @@ Component-scan과의 차이점은 이 설정은 Bean을 등록하는 작업을 �
 	<beans:bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
 		<beans:property name="driverClassName" value="oracle.jdbc.driver.OracleDriver" />
 		<beans:property name="url" value="jdbc:oracle:thin:@127.0.0.1:1521:orcl" />
-		<beans:property name="username" value="student" />
-		<beans:property name="password" value="test" />
+		<beans:property name="username" value="system" />
+		<beans:property name="password" value="oracle" />
 	</beans:bean>	
 	<!-- 2) Mybatis 설정
 		=> SqlSessionFactory -> SqlSessionTemplate 
@@ -104,9 +104,12 @@ Component-scan과의 차이점은 이 설정은 Bean을 등록하는 작업을 �
 	</beans:bean>	
 	
 	<!--  다운로드 테스트-->
-	   <beans:bean id="viewResolver" 
-         class="org.springframework.web.servlet.view.BeanNameViewResolver">
-      <beans:property name="order" value="1" />
-   </beans:bean>
+  <beans:bean id="jsonView" class="net.sf.json.spring.web.servlet.view.JsonView" /> 
+	<beans:bean id="viewResolver" 
+			class="org.springframework.web.servlet.view.BeanNameViewResolver">
+		<beans:property name="order" value="1" />
+	</beans:bean>
+   
+   
 	<beans:bean id="download" class="downTest.DownloadView"/> 
 </beans:beans>

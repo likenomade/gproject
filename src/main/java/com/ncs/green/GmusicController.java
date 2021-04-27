@@ -36,7 +36,6 @@ public class GmusicController {
 		vo = service.selectOne(vo); // vo값 불러오기
 		vo.setCount(vo.getCount() + 1); // count + 1
 		service.musicCount(vo);
-
 		// 일간 count +
 		cvo = chartService.dailyOne(cvo); // vo값 불러오기
 		cvo.setCount(cvo.getCount() + 1);
@@ -112,139 +111,54 @@ public class GmusicController {
 		return mv;
 	}// genrelist
 
-	// playlist
-	@RequestMapping(value = "/playlist")
-	public ModelAndView playlist(HttpServletRequest request, ModelAndView mv) {
-		// 파라미터로 값을 받음
-		String snumVal = request.getParameter("snumVal");
+	   // playlist
+	   @RequestMapping(value = "/playlist")
+	   public ModelAndView playlist(HttpServletRequest request, ModelAndView mv) {
+	      // 파라미터로 값을 받음
+	      String snumVal = request.getParameter("snumVal");
+	      // 스트링 배열 "," 기준으로 쪼개 담음
+	      if (snumVal != null && snumVal.length() > 0) {
 
-		System.out.println("************** getParameter snumVal => " + snumVal);
+	         String splitsnumVal[] = snumVal.split(",");
 
-		// 스트링 배열 "," 기준으로 쪼개 담음
-		if (snumVal != null && snumVal.length() > 0) {
+	         if ("U".equals(request.getParameter("jcode"))) {
+	            // 셔플 함수 참고
+	            // https://zetawiki.com/wiki/%ED%95%A8%EC%88%98_shuffle()
+	            List<String> list = Arrays.asList(splitsnumVal);
+	            Collections.shuffle(list);
+	            snumVal = "";
+	            for (int i = 0; i < splitsnumVal.length; i++) {
+	               splitsnumVal[i] = list.get(i);
 
-			String splitsnumVal[] = snumVal.split(",");
+	               snumVal += list.get(i)+",";
+	            }
+	         }
+	         // sql snum 형식이 int 이기 때문에 int 배열에 다시 담음
+	         int intsnumVal[] = new int[splitsnumVal.length];
+	         for (int i = 0; i < splitsnumVal.length; i++) {
+	            intsnumVal[i] = Integer.parseInt(splitsnumVal[i]);
+	         }
 
-			if ("U".equals(request.getParameter("jcode"))) {
-				// 셔플 함수 참고
-				// https://zetawiki.com/wiki/%ED%95%A8%EC%88%98_shuffle()
-				List<String> list = Arrays.asList(splitsnumVal);
-				Collections.shuffle(list);
-				snumVal = "";
-				for (int i = 0; i < splitsnumVal.length; i++) {
-					System.out.println(list.get(i));
-					splitsnumVal[i] = list.get(i);
-
-					snumVal += list.get(i) + ",";
-				}
-			}
-
-			// sql snum 형식이 int 이기 때문에 int 배열에 다시 담음
-			int intsnumVal[] = new int[splitsnumVal.length];
-
-			for (int i = 0; i < splitsnumVal.length; i++) {
-				intsnumVal[i] = Integer.parseInt(splitsnumVal[i]);
-			}
-
-			List<MusicVO> list = new ArrayList<MusicVO>();
-			for (int i = 0; i < intsnumVal.length; i++) {
-				MusicVO vo = new MusicVO();
-				vo.setSnum(intsnumVal[i]);
-				vo = service.selectOne(vo);
-				if (vo.getLyrics() != null && vo.getLyrics().length() > 0) {
-					vo.setLyrics(vo.getLyrics().replace("\"", "&quot;"));
-				}
-				System.out.println("********* list 담기전 snum " + vo.getSnum());
-				list.add(vo);
-				System.out.println("********* list 담은후 snum " + vo.getSnum());
-				System.out.println("********* list 담은후 listsnum " + list.get(i).getSnum());
-				System.out.println("********* list 담은후 list " + list.get(i));
-			}
-
-			for (int i = 0; i < list.size(); i++) {
-				System.out.println("********* list 담은후2 listsnum " + list.get(i).getSnum());
-				System.out.println("********* list 담은후2 list " + list.get(i));
-			}
-
-			System.out.println("********* 세션 담기직전 snumVal " + snumVal);
-
-			request.getSession().setAttribute("snumValSession", snumVal);
-
-			mv.addObject("Banana", list);
-			mv.setViewName("musicview/playlist");
-		} else {
-			mv.setViewName("musicview/playlist");
-		}
-		return mv;
-	} // playlist
-	// playlist
-	@RequestMapping(value = "/playlist2")
-	public ModelAndView playlist2(HttpServletRequest request, ModelAndView mv) {
-		// 파라미터로 값을 받음
-		String snumVal = request.getParameter("snumVal");
-		
-		System.out.println("************** getParameter snumVal => " + snumVal);
-		
-		// 스트링 배열 "," 기준으로 쪼개 담음
-		if (snumVal != null && snumVal.length() > 0) {
-			
-			String splitsnumVal[] = snumVal.split(",");
-			
-			if ("U".equals(request.getParameter("jcode"))) {
-				// 셔플 함수 참고
-				// https://zetawiki.com/wiki/%ED%95%A8%EC%88%98_shuffle()
-				List<String> list = Arrays.asList(splitsnumVal);
-				Collections.shuffle(list);
-				snumVal = "";
-				for (int i = 0; i < splitsnumVal.length; i++) {
-					System.out.println(list.get(i));
-					splitsnumVal[i] = list.get(i);
-					
-					snumVal += list.get(i) + ",";
-				}
-			}
-			
-			// sql snum 형식이 int 이기 때문에 int 배열에 다시 담음
-			int intsnumVal[] = new int[splitsnumVal.length];
-			
-			for (int i = 0; i < splitsnumVal.length; i++) {
-				intsnumVal[i] = Integer.parseInt(splitsnumVal[i]);
-			}
-			
-			List<MusicVO> list = new ArrayList<MusicVO>();
-			for (int i = 0; i < intsnumVal.length; i++) {
-				MusicVO vo = new MusicVO();
-				vo.setSnum(intsnumVal[i]);
-				vo = service.selectOne(vo);
-				if (vo.getLyrics() != null && vo.getLyrics().length() > 0) {
-					vo.setLyrics(vo.getLyrics().replace("\"", "&quot;"));
-				}
-				System.out.println("********* list 담기전 snum " + vo.getSnum());
-				list.add(vo);
-				System.out.println("********* list 담은후 snum " + vo.getSnum());
-				System.out.println("********* list 담은후 listsnum " + list.get(i).getSnum());
-				System.out.println("********* list 담은후 list " + list.get(i));
-			}
-			
-			for (int i = 0; i < list.size(); i++) {
-				System.out.println("********* list 담은후2 listsnum " + list.get(i).getSnum());
-				System.out.println("********* list 담은후2 list " + list.get(i));
-			}
-			
-			System.out.println("********* 세션 담기직전 snumVal " + snumVal);
-			
-			request.getSession().setAttribute("snumValSession", snumVal);
-			
-			mv.addObject("Banana", list);
-			
-			mv.addObject("snumTest",snumVal);
-			mv.setViewName("jsonView");
-		} else {
-			mv.setViewName("jsonView");
-		}
-		
-		return mv;
-	} // playlist2
+	         List<MusicVO> list = new ArrayList<MusicVO>();
+	         for (int i = 0; i < intsnumVal.length; i++) {
+	            MusicVO vo = new MusicVO();
+	            vo.setSnum(intsnumVal[i]);
+	            vo = service.selectOne(vo);
+	            if (vo.getLyrics() != null && vo.getLyrics().length() > 0) {
+	               vo.setLyrics(vo.getLyrics().replace("\"", "&quot;"));
+	            }
+	            list.add(vo);
+	         }
+	         request.getSession().setAttribute("snumValSession", snumVal);
+	         mv.addObject("Banana", list);
+	         mv.setViewName("musicview/playlist");
+	      } else {
+	         mv.setViewName("musicview/playlist");
+	      }
+	      
+	    
+	      return mv;
+	   } // playlist
 	
 	// ** 가사 보기
 	@RequestMapping(value = "/lyricsview")

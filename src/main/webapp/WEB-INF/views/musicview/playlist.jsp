@@ -1,20 +1,13 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ page trimDirectiveWhitespaces="true"%>
-<%
- response.setHeader("Cache-Control","no-cache");
- response.setHeader("Pragma","no-cache");
- response.setDateHeader("Expires",0);
-%>
+
 <!DOCTYPE html>
 <html>
 <head>
 <meta charset="UTF-8">
 <title>뮤직플레이리스트</title>
 <script src="resources/myLib/jquery-3.2.1.min.js"></script>
-<meta http-equiv="Cache-Control" content="no-cache"/>
-<meta http-equiv="Expires" content="0"/>
-<meta http-equiv="Pragma" content="no-cache"/>
 <style>
 /* 중앙정렬코드 */
 .layer {
@@ -258,10 +251,10 @@ body {
       var audio = document.getElementById("audioplay");
       if (!audio.paused) { // body 시작시 디폴트값은 "정지"이다. 정지버튼에 정지라고 써있는가?를 묻는다.
          audio.pause(); // 사실이라면 노래(오디오)를 정지시킨다.
-         $("#playpause").html("?"); // 이후에 다시 눌렀을때 정지가 아닌 재생이 되게 하고 싶으므로 다시 눌렀을 때 아래의 else조건으로 갈 수 있게 "재생"으로 바꿔줌
+         $("#playpause").html("►"); // 이후에 다시 눌렀을때 정지가 아닌 재생이 되게 하고 싶으므로 다시 눌렀을 때 아래의 else조건으로 갈 수 있게 "재생"으로 바꿔줌
       } else { // 뜻: 퍼즈 버튼에 정지라고 써져있지않다.
          audio.play(); // 오디오를 play() 재생한다.
-         $("#playpause").html("??"); // 퍼즈버튼의 글씨를 "정지"로 만들어준다.
+         $("#playpause").html("❚❚"); // 퍼즈버튼의 글씨를 "정지"로 만들어준다.
       }
 
    } //playpause
@@ -319,57 +312,8 @@ body {
    // 셔플
    function shuffle() { // 반복재생
       location.href='playlist?snumVal='+$('#snumValss').val()+'&jcode=U';
-
    } //shuffle
-   
-
-   function removeAjax() { // new삭제
-
-      var index = $("#playlist option").index($("#playlist option:selected"));
-      console.log('index 확인 => ' + index);
-      var snumValSession = '${snumValSession}';
-      var snumValsplit = snumValSession.split(',');
-      
-      var snumVal = '';
-      console.log('snumValSession 확인 => ' + snumValSession);
-      console.log('snumValsplit.length 확인 => ' + snumValsplit.length);
-
-      console.log('snumValsplit[index] 확인 => ' + snumValsplit[index]);
-      snumValsplit[index] = '';
-
-      for (var i = 0; i < snumValsplit.length - 1; i++) {
-         console.log('snumValsplit' + i + ' 확인 => ' + snumValsplit[i]);
-         console.log('snumValsplit' + i + ' 변환후 확인 => ' + snumValsplit[i]);
-         if (snumValsplit[i] != '') {
-            snumVal += snumValsplit[i] + ',';
-         }
-      }
-      console.log("snumVal 확인 => " + snumVal);
-
-      //url = 'playlist?snumVal=' + snumVal;
-      //window.open(url, "playlistView","toolbar=no,menubar=yes,scrollbars=no,resizable=no,width=340,height=720");
-
-      location.href = 'playlist?snumVal=' + snumVal;
-      opener.document.getElementById("snumVal").value = snumVal;
-
-      //삭제를 위한 값 넘기기 
-      /* $.ajax({
-         type : 'post',
-         url : 'playlist?snumVal=' + snumVal,
-         success : function() {
-            console.log("삭제 성공");
-            /* $('.content').html('');
-            $('.content').html(resultPage);
-            window.onload = autoplay(); */
-      /* },
-      error : function() {
-         console.log("삭제 실패");
-      }
-      }); */
-
-   } //removeAjax
-
-   
+     
    // selectbox 위아래 이동하게 구현하기
    // https://zzznara2.tistory.com/457 그대로 가져옴
    // 테스트
@@ -384,6 +328,7 @@ body {
          
          var snumVal = '';
 
+
          snumValsplit[index] = '';
 
          for (var i = 0; i < snumValsplit.length - 1; i++) {
@@ -391,23 +336,24 @@ body {
                snumVal += snumValsplit[i] + ',';
             }
          }
-
-         //삭제를 위한 값 넘기기 
          $.ajax({
-            type : 'post',
-            url : 'playlist?snumVal=' + snumVal,
-            success : function() {
-               console.log("삭제 성공");
-               //window.onload = autoplay(); 
-            },
-            error : function() {
-               console.log("삭제 실패");
-            }
-         });
-         $('#snumValss').val(snumVal);
-         opener.document.getElementById("snumVal").value = snumVal;
-         var url='/green/playlist?snumVal='+$('#snumValss').val();
-         window.history.replaceState({}, document.title, url);
+             type : 'post',
+             url : 'playlist?snumVal=' + snumVal,
+             success : function() {
+                console.log("위로 성공");
+                //window.onload = autoplay(); 
+             },
+             error : function() {
+                console.log("위로 실패");
+             }
+          });
+          $('#snumValss').val(snumVal);
+          opener.document.getElementById("snumVal").value = snumVal;
+          var url='/green/playlist?snumVal='+$('#snumValss').val();
+          window.history.replaceState({}, document.title, url);
+          
+         //삭제를 위한 값 넘기기 
+         
          
          for (var k = obj.options.length - 1; k >= 0; k--) { // playlist의 마지막인덱스 부터 0번쨰 인덱스 까지. 역순인 이유는 중간에 노래가 삭제되면 마지막 인덱스 k에 해당하는 옵션이 없어지므로 조건절의 오류가 나기 떄문이다.
             if (obj.options[k].selected) { // playlist의 k번째 옵션이 selected(==true)라면
@@ -579,18 +525,17 @@ body {
             <tr>
                <td>
                   <button type="button" id="previous" class="buttonLine1" onclick="previous()">|◁</button>
-                  <button type="button" id="playpause" class="buttonLine1" onclick="playpause()">??</button>
+                  <button type="button" id="playpause" class="buttonLine1" onclick="playpause()">❚❚</button>
                   <button type="button" id="next" class="buttonLine1" onclick="next()">▷|</button>
-                  <button type="button" class="buttonLine2" onClick="removeAjax()">삭제2</button>
                </td>
             </tr>
             <tr>
                <td>
-                  <button type="button" id="oneplay" class="buttonLine2" onClick="oneplay()">?</button>
+                  <button type="button" id="oneplay" class="buttonLine2" onClick="oneplay()">↻</button>
                   <!-- 버튼 a태그 처럼 이용하기 -->
                   <!-- https://dololak.tistory.com/765 참고 -->
                   <c:if test="${snumValSession!=null}">
-                     <button type="button" id="shuffle" class="buttonLine2" onClick="shuffle()">?</button>
+                     <button type="button" id="shuffle" class="buttonLine2" onClick="shuffle()">⇆</button>
                   </c:if>
                   <button type="button" class="buttonLine2" onClick="selectbox.remove( playlist );">삭제</button>
                   <button type="button" class="buttonLine2" onClick="selectbox.moveUp( playlist );">△</button>

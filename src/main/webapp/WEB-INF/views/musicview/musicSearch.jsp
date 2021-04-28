@@ -442,11 +442,11 @@ $(function(){
 		</div>
 	</div>
 
-	<form id="musicSearch" name="musicSearch" align="center">
+	<form id="musicSearch" name="musicSearch" >
 		<h3 align="left">'${UserKeyword}'에 대한 검색 결과입니다.</h3>
 		<div id="snameSearchAjax">
 			<!-- 곡검색 -->
-			<h1>곡 검색 결과 (${Aanana2})</h1>
+			<h1 align="center">곡 검색 결과 (${Aanana2})</h1>
 			<button type="button" onclick="getCheckboxValue()">플레이리스트</button>
 			<input type="hidden" id="snumVal" name="snumVal" value="">
 			<table id="table">
@@ -505,7 +505,7 @@ $(function(){
 				</c:forEach>
 			</table>
 			<c:if test="${empty Aanana}">
-				<h2>곡으로 검색한 결과가 없습니다.</h2>
+				<h2 align="center">곡으로 검색한 결과가 없습니다.</h2>
 			</c:if>
 			<div id="totalSearch">
 				<a href="mSearch?keyword=${UserKeyword}&searchType=sname">곡 검색 전체보기></a>
@@ -514,7 +514,7 @@ $(function(){
 		</div>
 		<div id="singernameSearchAjax">
 			<!-- 아티스트명 검색 -->
-			<h1>아티스트 검색 결과 (${Banana2})</h1>
+			<h1 align="center">아티스트 검색 결과 (${Banana2})</h1>
 			<button type="button" onclick="getCheckboxValue()">플레이리스트</button>
 			<input type="hidden" id="snumVal" name="snumVal" value="">
 			<table id="table">
@@ -569,7 +569,7 @@ $(function(){
 				</c:forEach>
 			</table>
 			<c:if test="${empty Banana}">
-				<h2>아티스트로 검색한 결과가 없습니다.</h2>
+				<h2 align="center">아티스트로 검색한 결과가 없습니다.</h2>
 			</c:if>
 			<div id="totalSearch">
 				<a href="mSearch?keyword=${UserKeyword}&searchType=singername">아티스트
@@ -579,7 +579,7 @@ $(function(){
 		<!--------------------------------------------------아티스트 검색 end----------------------------------------------------- -->
 		<!-- 가사검색 -->
 		<div id="lyricsSearchAjax">
-			<h1>가사 검색 결과 (${Canana2})</h1>
+			<h1 align="center">가사 검색 결과 (${Canana2})</h1>
 			<button type="button" onclick="getCheckboxValue()">플레이리스트</button>
 			<input type="hidden" id="snumVal" name="snumVal" value="">
 			<table id="table">
@@ -632,7 +632,7 @@ $(function(){
 				</c:forEach>
 			</table>
 			<c:if test="${empty Canana}">
-				<h2>가사로 검색한 결과가 없습니다.</h2>
+				<h2 align="center">가사로 검색한 결과가 없습니다.</h2>
 			</c:if>
 			<div id="totalSearch">
 				<a href="mSearch?keyword=${UserKeyword}&searchType=lyrics">가사 검색 전체보기></a>
